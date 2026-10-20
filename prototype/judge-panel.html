@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>评委评审中心 · 李斯特国际青少年钢琴大赛</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-logo">L</span>
+      <span>Liszt IPC<small>评委评审中心</small></span>
+    </a>
+    <nav class="nav-links"></nav>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions"></div>
+  </div>
+</header>
+
+<main class="dashboard">
+  <aside class="sidebar">
+    <div class="me">
+      <div class="avatar-lg" id="meAvatar">评</div>
+      <h4 id="meName">评委</h4>
+      <div class="role">评 委</div>
+    </div>
+    <nav>
+      <button data-panel="queue" class="active">📋 待评审队列</button>
+      <button data-panel="scored">✅ 已完成</button>
+      <button data-panel="demos">📤 我的示范视频</button>
+    </nav>
+  </aside>
+
+  <section class="dashboard-main">
+
+    <!-- 待评审队列 -->
+    <div class="panel active" id="panel-queue">
+      <div class="panel-head">
+        <div>
+          <h2 style="margin-bottom: 4px;">待评审队列</h2>
+          <p class="muted" style="margin: 0;">下方展示尚未由您评分的作品。点击「开始评分」进入 4 维度评分流程。</p>
+        </div>
+      </div>
+      <div class="stat-grid" id="queueStats" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 24px;"></div>
+      <div class="video-grid" id="queueGrid"></div>
+    </div>
+
+    <!-- 已完成 -->
+    <div class="panel" id="panel-scored">
+      <div class="panel-head"><h2>已完成的评分</h2></div>
+      <div id="scoredList"></div>
+    </div>
+
+    <!-- 我的示范视频 -->
+    <div class="panel" id="panel-demos">
+      <div class="panel-head"><h2>我上传的示范视频</h2></div>
+      <p class="muted" style="margin-bottom:18px;">您上传过的示范视频，选手可在「评委示范」面板查看。</p>
+      <div id="myDemosList"></div>
+    </div>
+
+  </section>
+</main>
+
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modalInner"></div></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script src="js/judge-panel.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>跳转中…</title>
+  <meta http-equiv="refresh" content="0;url=score.html">
+  <style>
+    body { background: #0c0a08; color: #f4ecdc; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; display: grid; place-items: center; min-height: 100vh; }
+    .box { text-align: center; padding: 30px; }
+    .ic { font-size: 3rem; margin-bottom: 16px; }
+    a { color: #c8a45c; text-decoration: none; border-bottom: 1px solid currentColor; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="ic">🎼</div>
+    <p>评审打分已迁移至 <a href="score.html">score.html</a></p>
+    <p style="margin-top: 8px; color: #8a8273; font-size: .9rem;">正在自动跳转…</p>
+  </div>
+  <script>location.replace('score.html' + location.search);</script>
+</body>
+</html>

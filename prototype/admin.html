@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>组委会管理后台 · 李斯特国际青少年钢琴大赛</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-logo">L</span>
+      <span>Liszt IPC<small>组委会管理后台</small></span>
+    </a>
+    <nav class="nav-links"></nav>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions"></div>
+  </div>
+</header>
+
+<main class="dashboard">
+  <aside class="sidebar">
+    <div class="me">
+      <div class="avatar-lg" id="meAvatar">组</div>
+      <h4 id="meName">组委会</h4>
+      <div class="role">组委会</div>
+    </div>
+    <nav>
+      <button data-panel="overview"  class="active">📊 数据总览</button>
+      <button data-panel="registrations">📋 报名列表</button>
+      <button data-panel="fee">💰 缴费管理</button>
+      <button data-panel="videos">🎬 作品管理</button>
+      <button data-panel="users">👥 选手管理</button>
+      <button data-panel="judges">🎓 评委管理</button>
+      <button data-panel="scores">🏆 成绩汇总</button>
+    </nav>
+  </aside>
+
+  <section class="dashboard-main">
+
+    <!-- 数据总览 -->
+    <div class="panel active" id="panel-overview">
+      <div class="panel-head"><h2>赛事数据总览</h2></div>
+      <div class="stat-grid" id="overviewStats"></div>
+
+      <h3 style="margin-top: 36px;">组别分布</h3>
+      <div id="groupDistribution" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 14px;"></div>
+
+      <h3 style="margin-top: 36px;">最近活动</h3>
+      <div id="recentActivity" class="card"></div>
+    </div>
+
+    <!-- 报名列表 -->
+    <div class="panel" id="panel-registrations">
+      <div class="panel-head">
+        <h2>📋 报名列表</h2>
+        <div style="display:flex; gap:8px; flex-wrap: wrap;">
+          <input type="text" id="regSearch" placeholder="搜索姓名/账号/手机号..." style="padding: 8px 14px; background: rgba(12,10,8,.4); border: 1px solid var(--color-border); border-radius: 999px; color: var(--color-text);">
+          <select id="regGroupFilter" style="padding: 8px 14px; background: rgba(12,10,8,.4); border: 1px solid var(--color-border); border-radius: var(--radius-sm); color: var(--color-text);">
+            <option value="">全部组别</option>
+            <option>儿童组</option>
+            <option>少年组</option>
+            <option>青年组</option>
+            <option>专业组</option>
+          </select>
+          <select id="regMajorFilter" style="padding: 8px 14px; background: rgba(12,10,8,.4); border: 1px solid var(--color-border); border-radius: var(--radius-sm); color: var(--color-text);">
+            <option value="">全部专业</option>
+            <option value="piano">🎹 钢琴</option>
+            <option value="vocal">🎤 声乐</option>
+            <option value="instrument">🎻 器乐</option>
+          </select>
+          <button class="btn btn-primary btn-sm" id="btnExportReg">📄 导出 CSV</button>
+        </div>
+      </div>
+      <div id="regSummary" class="stat-grid" style="margin-bottom: 18px;"></div>
+      <div class="table-wrap"><table class="data-table" id="registrationsTable"></table></div>
+    </div>
+
+    <!-- 缴费管理 -->
+    <div class="panel" id="panel-fee">
+      <div class="panel-head">
+        <h2>💰 缴费管理</h2>
+        <div style="display:flex; gap:8px;">
+          <select id="feeFilter" style="padding: 8px 14px; background: rgba(12,10,8,.4); border: 1px solid var(--color-border); border-radius: var(--radius-sm); color: var(--color-text);">
+            <option value="">全部</option>
+            <option value="paid">已缴费</option>
+            <option value="unpaid">未缴费</option>
+          </select>
+          <button class="btn btn-primary btn-sm" id="btnExportFee">📄 导出 CSV</button>
+        </div>
+      </div>
+      <div id="feeSummary" class="stat-grid" style="margin-bottom: 18px;"></div>
+      <div class="table-wrap"><table class="data-table" id="feeTable"></table></div>
+    </div>
+
+    <!-- 作品管理 -->
+    <div class="panel" id="panel-videos">
+      <div class="panel-head">
+        <h2>作品管理</h2>
+        <input type="text" id="videoSearch" placeholder="搜索作品 / 选手..." style="padding: 8px 14px; background: rgba(12,10,8,.4); border: 1px solid var(--color-border); border-radius: 999px; color: var(--color-text);">
+      </div>
+      <table class="data-table" id="videosTable"></table>
+    </div>
+
+    <!-- 选手管理 -->
+    <div class="panel" id="panel-users">
+      <div class="panel-head"><h2>选手管理</h2></div>
+      <table class="data-table" id="usersTable"></table>
+    </div>
+
+    <!-- 评委管理 -->
+    <div class="panel" id="panel-judges">
+      <div class="panel-head"><h2>评委管理</h2></div>
+      <table class="data-table" id="judgesTable"></table>
+    </div>
+
+    <!-- 成绩汇总 -->
+    <div class="panel" id="panel-scores">
+      <div class="panel-head">
+        <h2>成绩汇总</h2>
+        <select id="groupFilter" style="padding: 8px 14px; background: rgba(12,10,8,.4); border: 1px solid var(--color-border); border-radius: var(--radius-sm); color: var(--color-text);">
+          <option value="">全部组别</option>
+          <option>儿童组</option>
+          <option>少年组</option>
+          <option>青年组</option>
+          <option>专业组</option>
+        </select>
+      </div>
+      <table class="data-table" id="scoresTable"></table>
+    </div>
+
+  </section>
+</main>
+
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modalInner"></div></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

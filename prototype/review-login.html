@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>评审登录 · 李斯特国际青少年钢琴大赛</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .rl-shell {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 28px 18px;
+      background:
+        radial-gradient(1200px 600px at 70% -10%, rgba(200,164,92,.18), transparent 60%),
+        radial-gradient(900px 500px at -10% 100%, rgba(120,140,180,.12), transparent 50%),
+        var(--color-bg);
+    }
+    .rl-card {
+      width: 100%; max-width: 920px;
+      background: linear-gradient(180deg, rgba(28,24,18,.95), rgba(20,17,13,.95));
+      border: 1px solid var(--color-border-strong);
+      border-radius: 18px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.55);
+      display: grid; grid-template-columns: 1.05fr 1fr;
+      overflow: hidden;
+    }
+    .rl-left {
+      padding: 36px 40px;
+      background: linear-gradient(160deg, rgba(200,164,92,.12), rgba(200,164,92,.02));
+      border-right: 1px solid var(--color-border);
+    }
+    .rl-right { padding: 36px 40px; }
+    .rl-eyebrow { color: var(--color-gold-2); font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; }
+    .rl-title { font-family: var(--font-serif); font-size: 1.7rem; margin: 8px 0 6px; }
+    .rl-sub { color: var(--color-text-dim); line-height: 1.6; font-size: .92rem; }
+
+    .rl-tabs { display: flex; gap: 8px; margin: 18px 0 22px; }
+    .rl-tab {
+      flex: 1; padding: 10px 14px; border-radius: 8px;
+      background: transparent; color: var(--color-text-2);
+      border: 1px solid var(--color-border); cursor: pointer;
+      font-family: inherit; font-size: .92rem; font-weight: 500;
+      transition: all .2s;
+    }
+    .rl-tab.active { background: var(--color-gold); color: #1a1410; border-color: var(--color-gold); }
+
+    .qr-panel { text-align: center; }
+    .qr-box {
+      width: 220px; height: 220px;
+      margin: 18px auto; padding: 12px;
+      background: #fff; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 0 6px rgba(255,255,255,.05);
+    }
+    .qr-box canvas { width: 100%; height: 100%; image-rendering: pixelated; }
+    .qr-status {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 999px;
+      background: rgba(200,164,92,.15); color: var(--color-gold-2);
+      font-size: .85rem; font-weight: 500;
+      margin-top: 8px;
+    }
+    .qr-status.scanned { background: rgba(79,157,111,.18); color: #b6e3c8; }
+    .qr-status.expired { background: rgba(199,85,85,.18); color: #f3b8b8; }
+    .qr-status .dot { width:8px; height:8px; border-radius:50%; background:currentColor; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .qr-token {
+      font-family: ui-monospace, monospace; font-size: .78rem;
+      color: var(--color-text-dim);
+      word-break: break-all;
+      background: rgba(12,10,8,.5); border-radius: 6px;
+      padding: 8px 12px; margin-top: 14px;
+    }
+    .qr-hint { font-size: .82rem; color: var(--color-text-dim); margin-top: 10px; }
+
+    .rl-field { margin-bottom: 14px; }
+    .rl-field label { display: block; font-size: .85rem; color: var(--color-text-dim); margin-bottom: 4px; }
+    .rl-field input, .rl-field select {
+      width: 100%; padding: 11px 14px; border-radius: 8px;
+      background: rgba(12,10,8,.5); border: 1px solid var(--color-border);
+      color: var(--color-text); font-family: inherit; font-size: .98rem;
+    }
+    .rl-field input:focus, .rl-field select:focus { outline: none; border-color: var(--color-gold); }
+    .rl-field .sms-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+    .rl-field .sms-row button { padding: 0 14px; font-size: .88rem; }
+
+    .rl-error { color: #f3b8b8; font-size: .88rem; margin-top: 8px; min-height: 1.2em; }
+
+    .rl-info-list { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+    .rl-info-list .item {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: .88rem; color: var(--color-text-2); line-height: 1.5;
+    }
+    .rl-info-list .item .ic { color: var(--color-gold-2); flex: 0 0 auto; }
+
+    .rl-staff {
+      display: flex; align-items: center; gap: 12px;
+      margin-top: 20px; padding: 14px;
+      background: rgba(12,10,8,.5); border: 1px dashed rgba(200,164,92,.3);
+      border-radius: 10px;
+    }
+    .rl-staff .av {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, #c8a45c, #8a6a2c);
+      display: flex; align-items: center; justify-content: center;
+      color: #1a1410; font-weight: 700; font-size: 1.1rem;
+    }
+    .rl-staff .nm { font-weight: 600; }
+    .rl-staff .ti { font-size: .82rem; color: var(--color-text-dim); }
+
+    .rl-footer { display: flex; justify-content: space-between; margin-top: 18px; font-size: .85rem; }
+    .rl-footer a { color: var(--color-gold-2); }
+
+    @media (max-width: 720px) {
+      .rl-card { grid-template-columns: 1fr; }
+      .rl-left { border-right: none; border-bottom: 1px solid var(--color-border); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="rl-shell">
+  <div class="rl-card">
+    <!-- 左侧：说明 -->
+    <div class="rl-left">
+      <div class="rl-eyebrow">Judge Portal</div>
+      <h1 class="rl-title">评审专家入口</h1>
+      <p class="rl-sub">李斯特国际青少年钢琴大赛评委会专用登录通道。请使用<strong>手机扫码</strong>或<strong>手机号 + 验证码</strong>登录。</p>
+
+      <div class="rl-info-list">
+        <div class="item"><span class="ic">🔒</span><span>评审通道独立加密，仅评委本人可登录</span></div>
+        <div class="item"><span class="ic">📱</span><span>支持移动端登录，随时随地方便打分</span></div>
+        <div class="item"><span class="ic">✍️</span><span>评语末尾自动附带评委签名</span></div>
+        <div class="item"><span class="ic">🏆</span><span>每位选手由 3 位评委独立评分</span></div>
+      </div>
+
+      <div class="rl-staff">
+        <div class="av">陈</div>
+        <div>
+          <div class="nm">陈慕涵</div>
+          <div class="ti">评委会主席 · 中央音乐学院教授</div>
+        </div>
+      </div>
+
+      <div class="rl-footer">
+        <a href="index.html">← 返回首页</a>
+        <a href="login.html">选手 / 组委会登录 →</a>
+      </div>
+    </div>
+
+    <!-- 右侧：登录表单 -->
+    <div class="rl-right">
+      <div class="rl-tabs">
+        <button class="rl-tab active" data-method="qr">📱 扫码登录</button>
+        <button class="rl-tab" data-method="phone">📞 手机号登录</button>
+      </div>
+
+      <!-- 扫码面板 -->
+      <div id="qrPanel" class="qr-panel">
+        <p class="muted" style="font-size:.88rem;">使用<strong>评委专用 APP</strong>扫描下方二维码登录（演示可点下方按钮模拟）</p>
+        <div class="qr-box"><canvas id="qrCanvas" width="196" height="196"></canvas></div>
+        <div class="qr-status" id="qrStatus"><span class="dot"></span>等待扫码…</div>
+        <div class="qr-token" id="qrToken"></div>
+        <div class="qr-hint">二维码 5 分钟内有效。过期可点击"刷新二维码"</div>
+        <div style="display:flex; gap:8px; margin-top:14px;">
+          <button class="btn btn-ghost btn-sm" id="btnMockScan" style="flex:1;">📱 模拟手机扫码确认</button>
+          <button class="btn btn-ghost btn-sm" id="btnRefreshQr">刷新二维码</button>
+        </div>
+        <div class="rl-error" id="qrError"></div>
+      </div>
+
+      <!-- 手机号面板 -->
+      <div id="phonePanel" style="display:none;">
+        <form id="phoneForm">
+          <div class="rl-field">
+            <label>手机号</label>
+            <input type="tel" name="phone" required pattern="1[3-9]\d{9}" placeholder="11 位手机号" autocomplete="tel">
+          </div>
+          <div class="rl-field">
+            <label>短信验证码</label>
+            <div class="sms-row">
+              <input type="text" name="sms" required pattern="\d{4,6}" maxlength="6" placeholder="4–6 位短信验证码">
+              <button type="button" class="btn btn-ghost" id="btnSendSms">获取验证码</button>
+            </div>
+            <p class="muted" style="font-size:.78rem; margin-top:6px;">演示验证码：<strong style="color:var(--color-gold-2);">123456</strong>（任意手机号）</p>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" style="margin-top:8px;">登 录</button>
+        </form>
+        <div class="rl-error" id="phoneError"></div>
+
+        <p class="muted" style="font-size:.82rem; margin-top:18px;">💡 测试评委：<br>
+          · 陈慕涵（judge-001） · 13900000001<br>
+          · 李正熙（judge-002） · 13900000002<br>
+          · 王思远（judge-004） · 13900000004
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modalInner"></div></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // 标签切换
+  document.querySelectorAll('.rl-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.rl-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const m = btn.dataset.method;
+      document.getElementById('qrPanel').style.display = m === 'qr' ? '' : 'none';
+      document.getElementById('phonePanel').style.display = m === 'phone' ? '' : 'none';
+    });
+  });
+
+  // =============== 扫码登录 ===============
+  let currentToken = null;
+  let pollTimer = null;
+
+  function drawQrCode(canvas, data) {
+    // 简化版"QR 码"示意：伪随机 25x25 黑白方格
+    const ctx = canvas.getContext('2d');
+    const N = 25;        // 网格数
+    const cell = canvas.width / N;
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // 用 data 的 hash 作为随机种子
+    let seed = 0;
+    for (let i = 0; i < data.length; i++) seed = (seed * 31 + data.charCodeAt(i)) >>> 0;
+    function rand() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        if (rand() > 0.5) {
+          ctx.fillStyle = '#000';
+          ctx.fillRect(c * cell, r * cell, cell, cell);
+        }
+      }
+    }
+    // 三个定位角
+    function drawFinder(x, y) {
+      ctx.fillStyle = '#000';
+      ctx.fillRect(x * cell, y * cell, 7 * cell, 7 * cell);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect((x + 1) * cell, (y + 1) * cell, 5 * cell, 5 * cell);
+      ctx.fillStyle = '#000';
+      ctx.fillRect((x + 2) * cell, (y + 2) * cell, 3 * cell, 3 * cell);
+    }
+    drawFinder(0, 0); drawFinder(N - 7, 0); drawFinder(0, N - 7);
+    // 中心 logo
+    ctx.fillStyle = '#fff';
+    ctx.fillRect((N/2 - 1.5) * cell, (N/2 - 1.5) * cell, 3 * cell, 3 * cell);
+    ctx.fillStyle = '#c8a45c';
+    ctx.font = 'bold ' + (cell * 3) + 'px serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('L', N/2 * cell, N/2 * cell);
+  }
+
+  function refreshQr() {
+    if (pollTimer) clearInterval(pollTimer);
+    const judge = LisztData.SEED_JUDGES[0];
+    const token = LisztStore.createQrToken(judge.id);
+    currentToken = token;
+    drawQrCode(document.getElementById('qrCanvas'), token);
+    document.getElementById('qrToken').textContent = 'Token: ' + token;
+    document.getElementById('qrStatus').className = 'qr-status';
+    document.getElementById('qrStatus').innerHTML = '<span class="dot"></span>等待扫码…';
+    document.getElementById('qrError').textContent = '';
+    poll();
+    pollTimer = setInterval(poll, 1000);
+  }
+
+  function poll() {
+    if (!currentToken) return;
+    const t = LisztStore.getQrToken(currentToken);
+    if (!t) {
+      document.getElementById('qrStatus').className = 'qr-status expired';
+      document.getElementById('qrStatus').innerHTML = '⛔ 二维码已过期';
+      clearInterval(pollTimer);
+      return;
+    }
+    if (t.status === 'scanned') {
+      // 手机已扫，等待用户在手机上确认
+      document.getElementById('qrStatus').className = 'qr-status scanned';
+      document.getElementById('qrStatus').innerHTML = '<span class="dot"></span>已扫码，请在手机上确认登录…';
+    } else if (t.status === 'confirmed') {
+      // 完成登录
+      clearInterval(pollTimer);
+      const judge = LisztData.SEED_JUDGES.find(j => j.id === t.judgeId);
+      const user = LisztStore.findUser(u => u.judgeId === judge.id);
+      if (user) {
+        LisztAuth.login(user.username, user.password);
+        // 直接 set session
+        LisztStore.setSession({ userId: user.id, loginAt: Date.now() });
+        // 重新初始化
+        LisztAuth.current = user;
+        document.getElementById('qrStatus').className = 'qr-status scanned';
+        document.getElementById('qrStatus').innerHTML = '✓ 登录成功，正在跳转…';
+        setTimeout(() => location.href = 'score.html', 600);
+      }
+    }
+  }
+
+  // 模拟手机扫码
+  document.getElementById('btnMockScan').addEventListener('click', () => {
+    if (!currentToken) return;
+    const t = LisztStore.getQrToken(currentToken);
+    if (!t || t.status === 'expired') { document.getElementById('qrError').textContent = '二维码已过期，请刷新'; return; }
+    // 第一步：scanned；第二步：confirmed
+    if (t.status === 'pending') {
+      LisztStore.setQrTokenStatus(currentToken, 'scanned');
+      poll();
+    } else {
+      LisztStore.setQrTokenStatus(currentToken, 'confirmed');
+      poll();
+    }
+  });
+
+  document.getElementById('btnRefreshQr').addEventListener('click', refreshQr);
+
+  // 初始
+  refreshQr();
+
+  // =============== 手机号登录 ===============
+  document.getElementById('btnSendSms').addEventListener('click', function () {
+    this.disabled = true;
+    this.textContent = '已发送';
+    setTimeout(() => { this.disabled = false; this.textContent = '重新获取'; }, 30000);
+    LisztUtil.toast('验证码已发送（演示：123456）', 'info');
+  });
+
+  document.getElementById('phoneForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const phone = (fd.get('phone') || '').toString().trim();
+    const sms = (fd.get('sms') || '').toString().trim();
+    const errEl = document.getElementById('phoneError');
+    errEl.textContent = '';
+    if (!/^1[3-9]\d{9}$/.test(phone)) { errEl.textContent = '请输入正确的 11 位手机号'; return; }
+    if (sms !== '123456') { errEl.textContent = '验证码错误（演示：123456）'; return; }
+    const result = LisztStore.findJudgeByPhone(phone);
+    if (!result || !result.user) {
+      errEl.textContent = '该手机号未注册为评委';
+      return;
+    }
+    // 登录
+    LisztAuth.login(result.user.username, result.user.password);
+    LisztStore.setSession({ userId: result.user.id, loginAt: Date.now() });
+    LisztAuth.current = result.user;
+    LisztUtil.toast('登录成功', 'success');
+    setTimeout(() => location.href = 'score.html', 500);
+  });
+})();
+</script>
+</body>
+</html>

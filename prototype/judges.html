@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>专家评委 · 李斯特国际青少年钢琴大赛</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-logo">L</span>
+      <span>Liszt IPC<small>李斯特国际青少年钢琴大赛</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="judges.html" class="active">专家评委</a>
+      <a href="index.html#schedule">赛事日程</a>
+    </nav>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions"></div>
+  </div>
+</header>
+
+<!-- Hero -->
+<section style="padding: 80px 0 40px; text-align: center;">
+  <div class="container">
+    <span class="eyebrow-line" style="justify-content: center;">Jury Panel</span>
+    <h1 style="font-size: clamp(2.4rem, 5vw, 3.6rem); margin-bottom: 14px;">权威评委阵容</h1>
+    <p style="max-width: 720px; margin: 0 auto;">
+      本届大赛由 6 位来自中央音乐学院、上海音乐学院、欧洲知名音乐院校的钢琴家与教育家组成。
+      他们将以国际化的视野与严谨的学术态度，对选手的演奏进行全方位评价。
+    </p>
+  </div>
+</section>
+
+<!-- 评委列表 -->
+<section class="section-sm">
+  <div class="container">
+    <div class="judge-grid" id="judgeGrid"></div>
+  </div>
+</section>
+
+<!-- 评委寄语 -->
+<section class="section" style="background: rgba(20,17,13,.4);">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">From the Jury</span>
+      <h2>评委寄语</h2>
+      <p>来自评委主席的一句话，送给每一位站上舞台的琴童。</p>
+    </div>
+    <div class="card" style="max-width: 760px; margin: 0 auto; text-align: center; padding: 40px;">
+      <div style="font-size: 4rem; color: var(--color-gold); font-family: var(--font-serif); line-height: 1;">"</div>
+      <p style="font-family: var(--font-serif); font-style: italic; font-size: 1.25rem; color: var(--color-text); margin: 14px 0;">
+        在李斯特的音乐中，每一个音符都承载着人类最深的浪漫与激情。<br>
+        我希望每一位参赛选手，都能在琴键上找到属于自己的声音，<br>
+        让技术与艺术对话，让演奏成为灵魂的延伸。
+      </p>
+      <p style="margin-top: 20px;">
+          <strong style="color: var(--color-gold-2);">陈 慕 涵</strong><br>
+          <span class="muted">评委会主席 · 钢琴演奏家</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- 评审维度 -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Assessment</span>
+      <h2>评审维度</h2>
+      <p>评委从 4 个维度对选手演奏进行综合评分，每个维度满分 10 分。</p>
+    </div>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+      <div class="card" style="text-align:center;">
+        <div style="font-family: var(--font-serif); font-size: 2.6rem; color: var(--color-gold-2); margin-bottom: 6px;">25%</div>
+        <h3>演奏技巧</h3>
+        <p class="muted" style="font-size:.9rem;">音准、节奏、力度控制、双音与八度等纯技术维度的稳定性。</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-family: var(--font-serif); font-size: 2.6rem; color: var(--color-gold-2); margin-bottom: 6px;">30%</div>
+        <h3>音乐表现</h3>
+        <p class="muted" style="font-size:.9rem;">歌唱性、句法、呼吸感，音乐流动的内在逻辑。</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-family: var(--font-serif); font-size: 2.6rem; color: var(--color-gold-2); margin-bottom: 6px;">25%</div>
+        <h3>艺术处理</h3>
+        <p class="muted" style="font-size:.9rem;">对作品结构的把握、对比的处理、舞台呈现的整体艺术性。</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-family: var(--font-serif); font-size: 2.6rem; color: var(--color-gold-2); margin-bottom: 6px;">20%</div>
+        <h3>作品诠释</h3>
+        <p class="muted" style="font-size:.9rem;">对作品风格、流派特征的理解与个性化诠释。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <h5>李斯特国际青少年钢琴大赛</h5>
+      <p style="font-size:.9rem;">面向全球 6–22 岁青少年钢琴学习者的权威性国际赛事。</p>
+    </div>
+    <div>
+      <h5>赛 事</h5>
+      <ul>
+        <li><a href="index.html#schedule">赛事日程</a></li>
+        <li><a href="index.html#groups">组别设置</a></li>
+        <li><a href="index.html#prizes">奖项设置</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>参 赛</h5>
+      <ul>
+        <li><a href="register.html">选手注册</a></li>
+        <li><a href="login.html">登录系统</a></li>
+        <li><a href="judge-panel.html">评委入口</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>联 系</h5>
+      <ul>
+        <li>contact@liszt-pc.org</li>
+        <li>+86 571-8888-0000</li>
+        <li>杭州市西湖区文三路 88 号</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Liszt International Piano Competition. All rights reserved.</span>
+    <span>第 12 届 · 2026 赛季 · 杭州</span>
+  </div>
+</footer>
+
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modalInner"></div></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+  // 渲染评委列表
+  (function () {
+    const wrap = document.getElementById('judgeGrid');
+    if (!wrap) return;
+    wrap.innerHTML = LisztData.SEED_JUDGES.map(j => `
+      <article class="judge-card">
+        <div class="judge-photo" style="background:${LisztUtil.bg(j)}">
+          <span class="badge">${LisztUtil.escape(j.role)}</span>
+          <span class="initial">${LisztUtil.escape(j.initial)}</span>
+        </div>
+        <div class="judge-body">
+          <h3>${LisztUtil.escape(j.name)}</h3>
+          <div class="title">${LisztUtil.escape(j.title)}</div>
+          <p style="margin-bottom: 12px;">${LisztUtil.escape(j.bio)}</p>
+          <div style="font-size:.85rem; color: var(--color-text-dim); margin-bottom: 10px;">
+            <strong style="color: var(--color-gold-2);">${j.years}</strong> 年演奏与教学经验
+          </div>
+          <div>
+            ${j.expertise.map(x => `<span class="tag">${LisztUtil.escape(x)}</span>`).join('')}
+          </div>
+        </div>
+      </article>
+    `).join('');
+  })();
+</script>
+</body>
+</html>

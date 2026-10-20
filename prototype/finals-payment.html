@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>决赛缴费 · 李斯特国际青少年钢琴大赛</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .steps-row { display: flex; gap: 0; justify-content: center; margin: 0 0 32px; }
+    .step { flex: 1; max-width: 200px; padding: 12px 14px; text-align: center; background: rgba(20,17,13,.6); border: 1px solid rgba(200,164,92,.2); }
+    .step:first-child { border-radius: 10px 0 0 10px; }
+    .step:last-child  { border-radius: 0 10px 10px 0; }
+    .step .n { font-family: var(--font-serif); font-size: 1.1rem; color: var(--color-text-dim); }
+    .step .lb { font-size: .8rem; color: var(--color-text-dim); }
+    .step.active { background: linear-gradient(135deg, rgba(200,164,92,.18), rgba(200,164,92,.05)); border-color: var(--color-gold-2); }
+    .step.active .n, .step.active .lb { color: var(--color-gold-2); font-weight: 600; }
+    .step.done { background: rgba(79,157,111,.12); border-color: rgba(79,157,111,.5); }
+    .step.done .n { color: #b6e3c8; }
+  </style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="brand-logo">L</span><span>Liszt IPC<small>李斯特国际青少年钢琴大赛</small></span></a>
+    <nav class="nav-links"></nav>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions"></div>
+  </div>
+</header>
+
+<section class="page-hero" style="padding: 60px 24px 30px;">
+  <div class="page-hero-inner">
+    <span class="eyebrow">FINALS · PAYMENT</span>
+    <h1>缴纳报名费</h1>
+    <p class="sub" id="paySub">报名费 ￥680 · 完成缴费后立即生成电子参赛证</p>
+  </div>
+</section>
+
+<main class="round-shell" style="padding-top: 24px;">
+  <div class="steps-row">
+    <div class="step done"><div class="n">✓</div><div class="lb">填写信息</div></div>
+    <div class="step active"><div class="n">2</div><div class="lb">缴纳报名费</div></div>
+    <div class="step"><div class="n">3</div><div class="lb">获取参赛证</div></div>
+  </div>
+
+  <div class="payment-card">
+    <div class="payment-amount">
+      <div class="lb">应缴报名费</div>
+      <div class="vl">￥ <span id="amountNum">680</span></div>
+      <div class="muted" style="font-size:.85rem;">第十二届李斯特国际青少年钢琴大赛·全国总决赛</div>
+    </div>
+
+    <div class="field">
+      <label>选择支付方式 *</label>
+      <div class="payment-methods" id="paymentMethods">
+        <div class="pm-card" data-method="alipay">
+          <div class="ic">💙</div>
+          <div class="nm">支付宝</div>
+        </div>
+        <div class="pm-card" data-method="wechat">
+          <div class="ic">💚</div>
+          <div class="nm">微信支付</div>
+        </div>
+        <div class="pm-card" data-method="bank">
+          <div class="ic">🏦</div>
+          <div class="nm">银行转账</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 二维码区域（演示用 CSS 模拟） -->
+    <div class="field" id="qrWrap" style="display:none;">
+      <div class="qr-stage">
+        <div class="qr-img">扫码支付<br>￥<span id="qrAmount">680</span></div>
+        <div class="qr-cap">请使用 <strong id="qrCap">支付宝</strong> 扫码</div>
+      </div>
+      <p class="muted" style="text-align:center; font-size:.85rem; margin-top: 14px;">⏱️ 等待支付中…（演示环境将在 3 秒后自动确认）</p>
+    </div>
+
+    <!-- 银行转账账户 -->
+    <div class="field" id="bankWrap" style="display:none;">
+      <div class="account-box">
+        <div class="row"><span class="k">开户银行</span><span>招商银行 上海分行</span></div>
+        <div class="row"><span class="k">账户名</span><span>李斯特国际钢琴大赛组委会</span></div>
+        <div class="row"><span class="k">账号</span><span>6225 8800 1234 5678</span></div>
+        <div class="row"><span class="k">备注</span><span>决赛报名 + 您的参赛证号</span></div>
+      </div>
+      <p class="muted" style="font-size:.85rem; margin-top:12px;">💡 转账完成后请保留凭证，组委会将在 24 小时内核对。</p>
+      <div class="actions-row" style="margin-top: 14px;">
+        <button type="button" class="btn btn-primary" id="btnMarkPaid">我已完成转账</button>
+      </div>
+    </div>
+
+    <div id="paidArea" style="display:none;">
+      <div class="alert alert-success" style="text-align:center; padding: 20px;">
+        <div style="font-size:2rem; margin-bottom: 8px;">✅</div>
+        <strong>缴费完成！</strong>
+        <div class="muted" style="margin-top: 6px;">已为您生成电子参赛证，请前往查看。</div>
+      </div>
+      <div class="actions-row" style="justify-content: center;">
+        <a class="btn btn-primary" href="finals-cert.html">查看电子参赛证 →</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+  const me = LisztAuth.current;
+  if (!me) { location.href = 'login.html?next=finals-payment.html'; return; }
+
+  // 找当前报名
+  const regId = new URLSearchParams(location.search).get('regId') || sessionStorage.getItem('liszt.lastFinalRegId');
+  const reg = regId ? LisztStore.findFinalReg(r => r.id === regId) : (me.role === 'contestant' ? LisztStore.myFinalReg(me.id) : null);
+  if (!reg) { LisztUtil.toast('未找到您的决赛报名', 'error'); setTimeout(() => location.href = 'finals.html', 1000); return; }
+  if (reg.feePaid) {
+    // 已缴 → 直接展示成功
+    document.getElementById('paidArea').style.display = '';
+    document.getElementById('qrWrap').style.display = 'none';
+    document.getElementById('bankWrap').style.display = 'none';
+    document.querySelectorAll('.pm-card').forEach(c => c.style.pointerEvents = 'none');
+  }
+
+  // 支付金额
+  document.getElementById('amountNum').textContent = reg.feeAmount;
+  document.getElementById('qrAmount').textContent = reg.feeAmount;
+
+  let chosen = null;
+  document.querySelectorAll('.pm-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.pm-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      chosen = card.dataset.method;
+      const name = card.querySelector('.nm').textContent;
+      document.getElementById('qrCap').textContent = name;
+      document.getElementById('qrWrap').style.display = chosen === 'bank' ? 'none' : '';
+      document.getElementById('bankWrap').style.display = chosen === 'bank' ? '' : 'none';
+    });
+  });
+
+  // 演示：扫码支付 3 秒后自动确认
+  let autoTimer = null;
+  function markPaid(method) {
+    if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+    const regs = LisztStore.getFinalRegs();
+    const idx = regs.findIndex(r => r.id === reg.id);
+    if (idx >= 0) {
+      regs[idx].feePaid = true;
+      regs[idx].feeMethod = method;
+      regs[idx].feeAt = new Date().toISOString();
+      regs[idx].feeReceipt = method.toUpperCase() + '-' + Date.now().toString().slice(-10);
+      LisztStore.setFinalRegs(regs);
+    }
+    document.getElementById('qrWrap').style.display = 'none';
+    document.getElementById('bankWrap').style.display = 'none';
+    document.getElementById('paidArea').style.display = '';
+    LisztUtil.toast('缴费成功！', 'success');
+  }
+
+  // 监听选择支付方式后启动自动确认
+  const observer = new MutationObserver(() => {
+    if (chosen && chosen !== 'bank' && !reg.feePaid) {
+      if (autoTimer) clearTimeout(autoTimer);
+      autoTimer = setTimeout(() => markPaid(chosen), 3000);
+    }
+  });
+  observer.observe(document.getElementById('qrWrap'), { attributes: true, attributeFilter: ['style'] });
+
+  // 银行转账手动标记
+  document.getElementById('btnMarkPaid').addEventListener('click', () => markPaid('bank'));
+})();
+</script>
+</body>
+</html>

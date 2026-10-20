@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>赛后回顾 · 李斯特国际青少年钢琴大赛</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .recap-cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+    .recap-cta-row .btn-primary { background: linear-gradient(135deg, #84b9e0, #4f7fa6); border-color: #84b9e0; }
+  </style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="brand-logo">L</span><span>Liszt IPC<small>李斯特国际青少年钢琴大赛</small></span></a>
+    <nav class="nav-links"></nav>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions"></div>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <span class="eyebrow">★ RECAP 2026 ★</span>
+    <h1>赛后回顾</h1>
+    <p class="sub">第 12 届李斯特国际青少年钢琴大赛全国总决赛已圆满落幕。新闻 · 花絮 · 照片 · 优秀选手展演，一个都不少。</p>
+    <div class="hero-meta">
+      <span class="pill">📅 2026.07.20 – 07.24</span>
+      <span class="pill">📍 上海·贺绿汀音乐厅</span>
+      <span class="pill">🎼 6 位国际评委</span>
+      <span class="pill">👥 86 位决赛选手</span>
+    </div>
+    <div class="recap-cta-row" id="recapCta">
+      <a class="btn btn-primary" href="#news">📰 赛事新闻</a>
+      <a class="btn btn-ghost" href="#highlights">📸 现场花絮</a>
+      <a class="btn btn-ghost" href="#topFinalists">🏆 优秀选手</a>
+      <a class="btn btn-ghost" href="recap-results.html">📊 成绩查询</a>
+    </div>
+  </div>
+</section>
+
+<main class="round-shell">
+
+  <!-- 1. 赛事新闻 -->
+  <section class="round-section" id="news">
+    <span class="eyebrow">NEWS</span>
+    <h2><span class="ic">📰</span> 赛事新闻</h2>
+    <p class="desc">来自现场的实时报道与组委会官方公告。</p>
+    <div class="news-grid" id="newsGrid"></div>
+  </section>
+
+  <!-- 2. 现场花絮 -->
+  <section class="round-section" id="highlights">
+    <span class="eyebrow">HIGHLIGHTS</span>
+    <h2><span class="ic">📸</span> 现场花絮</h2>
+    <p class="desc">用镜头记录每一个值得珍藏的瞬间。</p>
+    <div class="highlights-grid" id="highlightsGrid"></div>
+  </section>
+
+  <!-- 3. 优秀选手展演 -->
+  <section class="round-section" id="topFinalists">
+    <span class="eyebrow">TOP FINALISTS</span>
+    <h2><span class="ic">🏆</span> 优秀选手展演</h2>
+    <p class="desc">本届决赛中表现最出色的选手们。点击"👍 投他一票"参与"观众最喜爱奖"评选。</p>
+    <div class="top-grid" id="topGrid"></div>
+  </section>
+
+  <!-- 4. 个人入口 -->
+  <section class="round-section">
+    <div class="final-cta" style="background: linear-gradient(135deg, rgba(91,158,209,.18), rgba(122,156,198,.05));">
+      <h2>查看您的参赛记录</h2>
+      <p>登录后可查看海选成绩、决赛成绩、评委评语，并下载电子参赛证 / 获奖证书。</p>
+      <div class="recap-cta-row" id="myCta">
+        <!-- 动态：登录后展示 -->
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // 新闻
+  const news = LisztData.NEWS;
+  document.getElementById('newsGrid').innerHTML = news.map((n, i) => {
+    const catClass = { '独家': 'exclusive', '故事': 'story', '公告': 'announce' }[n.tag] || '';
+    return `
+      <div class="news-card ${i === 0 ? 'feature' : ''}">
+        <div class="cover">${n.cover}</div>
+        <div class="meta">
+          <span class="cat-tag ${catClass}">${LisztUtil.escape(n.tag || n.category)}</span>
+          <span>${n.date}</span>
+          <span>·</span>
+          <span>${LisztUtil.escape(n.category)}</span>
+        </div>
+        <h3>${LisztUtil.escape(n.title)}</h3>
+        <div class="summary">${LisztUtil.escape(n.summary)}</div>
+      </div>
+    `;
+  }).join('');
+
+  // 花絮
+  document.getElementById('highlightsGrid').innerHTML = LisztData.HIGHLIGHTS.map(h => `
+    <div class="hl-card">
+      <div class="emoji">${h.cover}</div>
+      <div class="cap">${LisztUtil.escape(h.caption)}</div>
+      <div class="tg">${LisztUtil.escape(h.tag)}</div>
+    </div>
+  `).join('');
+
+  // 优秀选手 + 投票
+  const likes = LisztStore.getLikes();
+  function renderTopGrid() {
+    const ls = LisztStore.getLikes();
+    document.getElementById('topGrid').innerHTML = LisztData.TOP_FINALISTS.map(t => {
+      const cls = t.rank.includes('总') ? 'champion'
+                : t.rank.includes('冠军') ? 'gold'
+                : t.rank.includes('亚军') ? 'silver' : '';
+      const voted = !!sessionStorage.getItem('vote_' + t.contestantId);
+      const total = ls[t.contestantId] || 0;
+      return `
+        <div class="top-card">
+          <div class="rank-badge ${cls}">${LisztUtil.escape(t.rank)}</div>
+          <div class="name">${LisztUtil.escape(t.name)}</div>
+          <div class="group">${LisztUtil.escape(t.group)}</div>
+          <div class="school">${LisztUtil.escape(t.school)}</div>
+          <div class="work">《${LisztUtil.escape(t.work)}》</div>
+          <div class="avg">★ ${t.avg.toFixed(2)}</div>
+          <button class="vote-btn ${voted ? 'voted' : ''}" data-id="${t.contestantId}">
+            ${voted ? '✓ 已投' : '👍 投他一票'} <span style="opacity:.7;">(${total})</span>
+          </button>
+        </div>
+      `;
+    }).join('');
+    document.querySelectorAll('.vote-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        if (sessionStorage.getItem('vote_' + id)) { LisztUtil.toast('您已为此选手投过票', 'info'); return; }
+        const total = LisztStore.addLike(id);
+        sessionStorage.setItem('vote_' + id, '1');
+        LisztUtil.toast('投票成功！', 'success');
+        renderTopGrid();
+      });
+    });
+  }
+  renderTopGrid();
+
+  // 个人入口
+  const me = LisztAuth.current;
+  const myCta = document.getElementById('myCta');
+  if (me && me.role === 'contestant') {
+    myCta.innerHTML = `
+      <a class="btn btn-primary" href="recap-results.html">📊 查看我的成绩（海选 + 决赛）</a>
+      <a class="btn btn-primary" href="recap-cert.html">📜 下载获奖证书</a>
+      <a class="btn btn-ghost" href="finals-cert.html">查看电子参赛证</a>
+    `;
+  } else if (me) {
+    myCta.innerHTML = `<a class="btn btn-ghost" href="score.html">前往评审打分</a>`;
+  } else {
+    myCta.innerHTML = `<a class="btn btn-primary" href="login.html?next=recap.html">登录查询我的成绩</a>`;
+  }
+})();
+</script>
+</body>
+</html>

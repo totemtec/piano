@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>决赛报名 · 李斯特国际青少年钢琴大赛</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .steps-row { display: flex; gap: 0; justify-content: center; margin: 0 0 32px; }
+    .step { flex: 1; max-width: 200px; padding: 12px 14px; text-align: center; background: rgba(20,17,13,.6); border: 1px solid rgba(200,164,92,.2); }
+    .step:first-child { border-radius: 10px 0 0 10px; }
+    .step:last-child  { border-radius: 0 10px 10px 0; }
+    .step .n { font-family: var(--font-serif); font-size: 1.1rem; color: var(--color-text-dim); }
+    .step .lb { font-size: .8rem; color: var(--color-text-dim); }
+    .step.active { background: linear-gradient(135deg, rgba(200,164,92,.18), rgba(200,164,92,.05)); border-color: var(--color-gold-2); }
+    .step.active .n, .step.active .lb { color: var(--color-gold-2); font-weight: 600; }
+    .step.done { background: rgba(79,157,111,.12); border-color: rgba(79,157,111,.5); }
+    .step.done .n { color: #b6e3c8; }
+  </style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="brand-logo">L</span><span>Liszt IPC<small>李斯特国际青少年钢琴大赛</small></span></a>
+    <nav class="nav-links"></nav>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions"></div>
+  </div>
+</header>
+
+<section class="page-hero" style="padding: 60px 24px 30px;">
+  <div class="page-hero-inner">
+    <span class="eyebrow">FINALS REGISTRATION</span>
+    <h1>决赛报名</h1>
+    <p class="sub">填写 2 首参赛曲目 + 指导教师信息 + 收件地址 → 进入缴费 → 获得电子参赛证</p>
+  </div>
+</section>
+
+<main class="round-shell" style="padding-top: 24px;">
+  <!-- 步骤条 -->
+  <div class="steps-row">
+    <div class="step active"><div class="n">1</div><div class="lb">填写信息</div></div>
+    <div class="step"><div class="n">2</div><div class="lb">缴纳报名费</div></div>
+    <div class="step"><div class="n">3</div><div class="lb">获取参赛证</div></div>
+  </div>
+
+  <form id="finalRegForm" autocomplete="off">
+    <!-- 1. 自动展示：选手基础信息（只读） -->
+    <div class="reg-form-card">
+      <h3><span class="ic">👤</span> 选手信息（自动展示）</h3>
+      <p class="muted" style="font-size:.85rem; margin-bottom: 14px;">以下信息来自您的初赛报名，决赛报名中不可修改。如需更正请联系组委会。</p>
+      <div class="readonly-row" id="readonlyUser"></div>
+    </div>
+
+    <!-- 2. 2 个参赛作品 -->
+    <div class="reg-form-card">
+      <h3><span class="ic">🎼</span> 决赛参赛曲目（2 首）</h3>
+      <p class="muted" style="font-size:.85rem; margin-bottom: 14px;">决赛为现场演奏，不需上传音视频。每首曲目不少于 6 分钟，须包含至少一首李斯特作品。</p>
+      <div class="works-block">
+        <div class="work-input">
+          <div class="wh"><span class="badge">1</span> 参赛曲目 ①</div>
+          <div class="field">
+            <label>作品名称 *</label>
+            <input type="text" name="work1Title" required maxlength="80" placeholder="例如：李斯特 超技练习曲《追雪》">
+          </div>
+          <div class="field">
+            <label>作曲家 *</label>
+            <input type="text" name="work1Composer" required maxlength="40" placeholder="例如：Franz Liszt">
+          </div>
+          <div class="field">
+            <label>时长（分钟）*</label>
+            <input type="number" name="work1Duration" required min="6" max="20" placeholder="6 - 20">
+          </div>
+          <div class="field">
+            <label>作品介绍（200 字内）*</label>
+            <textarea name="work1Desc" required maxlength="200" rows="3" placeholder="作品的演绎构思、风格把握、亮点说明"></textarea>
+          </div>
+        </div>
+        <div class="work-input">
+          <div class="wh"><span class="badge">2</span> 参赛曲目 ②</div>
+          <div class="field">
+            <label>作品名称 *</label>
+            <input type="text" name="work2Title" required maxlength="80" placeholder="例如：拉赫玛尼诺夫 第二钢琴协奏曲 第一乐章">
+          </div>
+          <div class="field">
+            <label>作曲家 *</label>
+            <input type="text" name="work2Composer" required maxlength="40" placeholder="例如：Sergei Rachmaninoff">
+          </div>
+          <div class="field">
+            <label>时长（分钟）*</label>
+            <input type="number" name="work2Duration" required min="6" max="20" placeholder="6 - 20">
+          </div>
+          <div class="field">
+            <label>作品介绍（200 字内）*</label>
+            <textarea name="work2Desc" required maxlength="200" rows="3" placeholder="作品的演绎构思、风格把握、亮点说明"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 指导教师 -->
+    <div class="reg-form-card">
+      <h3><span class="ic">👨‍🏫</span> 指导教师信息</h3>
+      <p class="muted" style="font-size:.85rem; margin-bottom: 14px;">决赛现场将邀请指导教师观赛，并为获奖选手颁发优秀指导教师证书。</p>
+      <div class="field-row" style="grid-template-columns: 1fr 1fr; gap: 14px;">
+        <div class="field">
+          <label>指导教师姓名 *</label>
+          <input type="text" name="teacherName" required maxlength="20" placeholder="例如：王 启 文">
+        </div>
+        <div class="field">
+          <label>指导教师电话 *</label>
+          <input type="tel" name="teacherPhone" required pattern="1[3-9]\d{9}" placeholder="11 位手机号">
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 收件地址 -->
+    <div class="reg-form-card">
+      <h3><span class="ic">📬</span> 收件地址（用于邮寄参赛证、获奖证书）</h3>
+      <div class="field-row" style="grid-template-columns: 1fr 1fr; gap: 14px;">
+        <div class="field">
+          <label>收件人 *</label>
+          <input type="text" name="recvName" required maxlength="20" value="">
+        </div>
+        <div class="field">
+          <label>收件人电话 *</label>
+          <input type="tel" name="recvPhone" required pattern="1[3-9]\d{9}" value="">
+        </div>
+      </div>
+      <div class="field-row" style="grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;">
+        <div class="field">
+          <label>省份 *</label>
+          <input type="text" name="recvProvince" required maxlength="20" placeholder="例如：北京市">
+        </div>
+        <div class="field">
+          <label>城市 / 区 *</label>
+          <input type="text" name="recvCity" required maxlength="20" placeholder="例如：海淀区">
+        </div>
+      </div>
+      <div class="field" style="margin-top: 14px;">
+        <label>详细地址 *</label>
+        <input type="text" name="recvDetail" required maxlength="80" placeholder="街道、小区、门牌号（用于邮寄参赛证、获奖证书）">
+      </div>
+    </div>
+
+    <div class="actions-row" style="justify-content: center; margin-top: 24px;">
+      <button type="submit" class="btn btn-primary btn-lg" style="min-width: 200px;">下一步：缴纳报名费 →</button>
+      <a class="btn btn-ghost" href="finals.html">返回</a>
+    </div>
+  </form>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+  const me = LisztAuth.current;
+  if (!me) { location.href = 'login.html?next=finals-register.html'; return; }
+  if (me.role !== 'contestant') { LisztUtil.toast('仅选手可报名决赛', 'error'); setTimeout(() => location.href = 'finals.html', 1000); return; }
+  if (!LisztStore.isPrelimPassed(me.id)) { LisztUtil.toast('您尚未晋级决赛', 'error'); setTimeout(() => location.href = 'finals.html', 1000); return; }
+  if (LisztStore.myFinalReg(me.id)) { LisztUtil.toast('您已完成决赛报名', 'info'); setTimeout(() => location.href = 'finals-cert.html', 1000); return; }
+
+  // 自动展示只读信息
+  const genderLabel = me.gender === 'male' ? '男' : me.gender === 'female' ? '女' : '—';
+  document.getElementById('readonlyUser').innerHTML = `
+    <div class="ro"><div class="lb">真实姓名</div><div class="vl">${LisztUtil.escape(me.name || '—')}</div></div>
+    <div class="ro"><div class="lb">性别</div><div class="vl">${genderLabel}</div></div>
+    <div class="ro"><div class="lb">账号</div><div class="vl">${LisztUtil.escape(me.username)}</div></div>
+    <div class="ro"><div class="lb">手机号</div><div class="vl">${LisztUtil.escape(me.phone || '—')}</div></div>
+    <div class="ro"><div class="lb">参赛专业</div><div class="vl">${LisztUtil.escape((LisztData.MAJORS.find(m => m.key === me.major) || {}).label || '—')}</div></div>
+    <div class="ro"><div class="lb">参赛组别</div><div class="vl">${LisztUtil.escape(me.group || '—')}</div></div>
+    <div class="ro"><div class="lb">身份证号</div><div class="vl">${LisztUtil.maskIdCard(me.idCard)}</div></div>
+    <div class="ro"><div class="lb">所在学校</div><div class="vl">${LisztUtil.escape(me.school || '—')}</div></div>
+  `;
+
+  // 默认收件人为本人
+  document.querySelector('input[name="recvName"]').value = me.name || '';
+  document.querySelector('input[name="recvPhone"]').value = me.phone || '';
+
+  // 已有作品信息时回填
+  const myVideo = LisztStore.myVideo(me.id);
+  if (myVideo) {
+    // 用初赛作品作"作品 1"默认值，选手可在决赛报名时调整
+    document.querySelector('input[name="work1Title"]').value = myVideo.title;
+    document.querySelector('input[name="work1Composer"]').value = myVideo.composer;
+  }
+
+  // 提交
+  document.getElementById('finalRegForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(e.target));
+
+    // 校验
+    if (!/^1[3-9]\d{9}$/.test(fd.teacherPhone)) { LisztUtil.toast('指导教师手机号不正确', 'error'); return; }
+    if (!/^1[3-9]\d{9}$/.test(fd.recvPhone))    { LisztUtil.toast('收件人手机号不正确', 'error'); return; }
+    if (Number(fd.work1Duration) < 6) { LisztUtil.toast('作品 ① 时长不能少于 6 分钟', 'error'); return; }
+    if (Number(fd.work2Duration) < 6) { LisztUtil.toast('作品 ② 时长不能少于 6 分钟', 'error'); return; }
+    if (fd.work1Title === fd.work2Title) { LisztUtil.toast('两首曲目不能重复', 'error'); return; }
+    // 至少一首李斯特
+    const hasLiszt = [fd.work1Composer, fd.work2Composer].some(c => /李斯特|Liszt/i.test(c || ''))
+                  || [fd.work1Title, fd.work2Title].some(t => /李斯特|Liszt/i.test(t || ''));
+    if (!hasLiszt) {
+      if (!confirm('检测到您的两首曲目中无李斯特作品。决赛规则要求至少包含一首李斯特作品，是否继续？')) return;
+    }
+
+    // 写入决赛报名
+    const reg = {
+      id: 'fr-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      contestantId: me.id,
+      works: [
+        { title: fd.work1Title.trim(), composer: fd.work1Composer.trim(), duration: Number(fd.work1Duration), desc: fd.work1Desc.trim() },
+        { title: fd.work2Title.trim(), composer: fd.work2Composer.trim(), duration: Number(fd.work2Duration), desc: fd.work2Desc.trim() }
+      ],
+      teacherName: fd.teacherName.trim(),
+      teacherPhone: fd.teacherPhone.trim(),
+      address: {
+        name: fd.recvName.trim(),
+        phone: fd.recvPhone.trim(),
+        province: fd.recvProvince.trim(),
+        city: fd.recvCity.trim(),
+        detail: fd.recvDetail.trim()
+      },
+      feePaid: false,
+      feeAmount: LisztData.FINAL_COMPETITION.feeAmount,
+      certNo: LisztStore.allocCertNo(),
+      submittedAt: new Date().toISOString()
+    };
+    const regs = LisztStore.getFinalRegs();
+    regs.push(reg);
+    LisztStore.setFinalRegs(regs);
+
+    // 把 certNo 暂存到 sessionStorage 用于下一步支付
+    sessionStorage.setItem('liszt.lastFinalRegId', reg.id);
+    LisztUtil.toast('报名信息已保存，正在进入缴费…', 'success');
+    setTimeout(() => location.href = 'finals-payment.html?regId=' + reg.id, 700);
+  });
+})();
+</script>
+</body>
+</html>

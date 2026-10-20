@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>电子参赛证 · 李斯特国际青少年钢琴大赛</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .steps-row { display: flex; gap: 0; justify-content: center; margin: 0 0 32px; }
+    .step { flex: 1; max-width: 200px; padding: 12px 14px; text-align: center; background: rgba(20,17,13,.6); border: 1px solid rgba(200,164,92,.2); }
+    .step:first-child { border-radius: 10px 0 0 10px; }
+    .step:last-child  { border-radius: 0 10px 10px 0; }
+    .step .n { font-family: var(--font-serif); font-size: 1.1rem; color: var(--color-text-dim); }
+    .step .lb { font-size: .8rem; color: var(--color-text-dim); }
+    .step.active { background: linear-gradient(135deg, rgba(200,164,92,.18), rgba(200,164,92,.05)); border-color: var(--color-gold-2); }
+    .step.active .n, .step.active .lb { color: var(--color-gold-2); font-weight: 600; }
+    .step.done { background: rgba(79,157,111,.12); border-color: rgba(79,157,111,.5); }
+    .step.done .n { color: #b6e3c8; }
+  </style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="brand-logo">L</span><span>Liszt IPC<small>李斯特国际青少年钢琴大赛</small></span></a>
+    <nav class="nav-links"></nav>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions"></div>
+  </div>
+</header>
+
+<section class="page-hero" style="padding: 60px 24px 30px;">
+  <div class="page-hero-inner">
+    <span class="eyebrow">★ E-CERTIFICATE ★</span>
+    <h1>电子参赛证</h1>
+    <p class="sub">请妥善保存，决赛现场报到时需出示此证（含参赛证号）</p>
+  </div>
+</section>
+
+<main class="round-shell" style="padding-top: 24px;">
+  <div class="steps-row">
+    <div class="step done"><div class="n">✓</div><div class="lb">填写信息</div></div>
+    <div class="step done"><div class="n">✓</div><div class="lb">缴纳报名费</div></div>
+    <div class="step active"><div class="n">3</div><div class="lb">获取参赛证</div></div>
+  </div>
+
+  <!-- 参赛证本体 -->
+  <div class="cert-stage">
+    <div class="cert-card" id="certCard">
+      <div class="cert-head">
+        <div class="cert-eyebrow">LISZT INTERNATIONAL PIANO COMPETITION</div>
+        <div class="cert-title">电子参赛证</div>
+        <div class="cert-sub">E-CERTIFICATE OF PARTICIPATION · FINALS</div>
+      </div>
+      <div class="cert-body">
+        <div class="cert-photo" id="certPhoto">参</div>
+        <div class="cert-info">
+          <div class="name" id="certName">—</div>
+          <div class="row"><div class="k">参赛证号</div><div class="v cert-no" id="certNo">—</div></div>
+          <div class="row"><div class="k">组别</div><div class="v" id="certGroup">—</div></div>
+          <div class="row"><div class="k">专业</div><div class="v" id="certMajor">—</div></div>
+          <div class="row"><div class="k">所在学校</div><div class="v" id="certSchool">—</div></div>
+          <div class="row"><div class="k">比赛日期</div><div class="v" id="certDate">—</div></div>
+          <div class="row"><div class="k">比赛场馆</div><div class="v" id="certVenue">—</div></div>
+          <div class="row"><div class="k">参赛曲目</div><div class="v" id="certWorks">—</div></div>
+        </div>
+      </div>
+      <div class="cert-foot">
+        <div>
+          <div class="muted" style="font-size:.85rem;">签发日期</div>
+          <div style="font-size:.95rem;" id="certIssueDate">—</div>
+        </div>
+        <div class="cert-stamp">
+          <div>
+            <div class="ss">★</div>
+            <div>李斯特 IPC</div>
+            <div class="sn">FINALS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cert-actions">
+    <button class="btn btn-primary" id="btnDownload">⬇ 下载参赛证（PNG）</button>
+    <button class="btn btn-ghost" id="btnCopy">复制参赛证号</button>
+    <a class="btn btn-ghost" href="recap-results.html">查看我的成绩</a>
+    <a class="btn btn-ghost" href="finals.html">返回决赛首页</a>
+  </div>
+</main>
+
+<!-- 隐藏的 Canvas（用于下载） -->
+<canvas id="certCanvas" style="display:none;" width="1080" height="720"></canvas>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+  const me = LisztAuth.current;
+  if (!me) { location.href = 'login.html?next=finals-cert.html'; return; }
+  if (me.role !== 'contestant') { LisztUtil.toast('仅选手可查看参赛证', 'error'); setTimeout(() => location.href = 'finals.html', 1000); return; }
+  const reg = LisztStore.myFinalReg(me.id);
+  if (!reg) { LisztUtil.toast('请先完成决赛报名', 'error'); setTimeout(() => location.href = 'finals.html', 1000); return; }
+  if (!reg.feePaid) { LisztUtil.toast('请先完成缴费', 'error'); setTimeout(() => location.href = 'finals-payment.html', 1000); return; }
+
+  const F = LisztData.FINAL_COMPETITION;
+  const major = (LisztData.MAJORS.find(m => m.key === me.major) || {}).label || '—';
+
+  document.getElementById('certName').textContent    = me.name || '—';
+  document.getElementById('certNo').textContent     = reg.certNo;
+  document.getElementById('certGroup').textContent   = me.group || '—';
+  document.getElementById('certMajor').textContent   = major;
+  document.getElementById('certSchool').textContent  = me.school || '—';
+  document.getElementById('certDate').textContent    = F.dateLabel;
+  document.getElementById('certVenue').textContent   = `${F.city} · ${F.venue}`;
+  document.getElementById('certWorks').textContent   = reg.works.map((w, i) => `(${i+1}) ${w.title}`).join('  /  ');
+  document.getElementById('certIssueDate').textContent = LisztUtil.formatDate(new Date().toISOString()).slice(0, 10);
+
+  // 头像
+  const certPhoto = document.getElementById('certPhoto');
+  if (me.avatarUrl) {
+    certPhoto.innerHTML = `<img src="${me.avatarUrl}" alt="照片">`;
+  } else {
+    certPhoto.textContent = (me.name || 'L').slice(0, 1);
+  }
+
+  // 复制
+  document.getElementById('btnCopy').addEventListener('click', () => {
+    try {
+      navigator.clipboard.writeText(reg.certNo);
+      LisztUtil.toast('参赛证号已复制', 'success');
+    } catch (e) {
+      LisztUtil.toast('复制失败', 'error');
+    }
+  });
+
+  // 下载（Canvas 绘制）
+  document.getElementById('btnDownload').addEventListener('click', () => {
+    drawCertToCanvas().then(() => {
+      const canvas = document.getElementById('certCanvas');
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `参赛证-${reg.certNo}.png`;
+      a.click();
+      LisztUtil.toast('参赛证已下载', 'success');
+    }).catch(err => {
+      console.error(err);
+      LisztUtil.toast('生成失败：' + err.message, 'error');
+    });
+  });
+
+  // ============ Canvas 绘制参赛证 ============
+  function drawCertToCanvas() {
+    return new Promise((resolve, reject) => {
+      const canvas = document.getElementById('certCanvas');
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      // 背景
+      const bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, '#1f1810');
+      bg.addColorStop(1, '#0e0a07');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+      // 顶部光晕
+      const rad = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, 400);
+      rad.addColorStop(0, 'rgba(200,164,92,.28)');
+      rad.addColorStop(1, 'rgba(200,164,92,0)');
+      ctx.fillStyle = rad;
+      ctx.fillRect(0, 0, W, 240);
+
+      // 边框
+      ctx.strokeStyle = 'rgba(200,164,92,.55)';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(20, 20, W - 40, H - 40);
+      ctx.strokeStyle = 'rgba(200,164,92,.18)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(34, 34, W - 68, H - 68);
+
+      // 标题
+      ctx.fillStyle = '#c8a45c';
+      ctx.textAlign = 'center';
+      ctx.font = '600 22px "Inter", sans-serif';
+      ctx.fillText('LISZT INTERNATIONAL PIANO COMPETITION', W / 2, 100);
+      ctx.fillStyle = '#f6e7c4';
+      ctx.font = '700 56px "Playfair Display", "Times New Roman", serif';
+      ctx.fillText('电子参赛证', W / 2, 170);
+      ctx.fillStyle = '#a89880';
+      ctx.font = '400 18px "Inter", sans-serif';
+      ctx.fillText('E-CERTIFICATE OF PARTICIPATION · FINALS', W / 2, 200);
+
+      // 分隔线
+      ctx.strokeStyle = 'rgba(200,164,92,.4)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(120, 230);
+      ctx.lineTo(W - 120, 230);
+      ctx.stroke();
+
+      // 头像框
+      const photoX = 100, photoY = 280, photoW = 160, photoH = 200;
+      ctx.fillStyle = '#2a231b';
+      ctx.fillRect(photoX, photoY, photoW, photoH);
+      ctx.strokeStyle = 'rgba(200,164,92,.4)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(photoX, photoY, photoW, photoH);
+      if (me.avatarUrl) {
+        const img = new Image();
+        img.onload = () => {
+          // 等比 cover 裁切
+          const r = Math.max(photoW / img.width, photoH / img.height);
+          const dw = img.width * r, dh = img.height * r;
+          const dx = photoX + (photoW - dw) / 2;
+          const dy = photoY + (photoH - dh) / 2;
+          ctx.drawImage(img, dx, dy, dw, dh);
+          continueDraw();
+        };
+        img.onerror = continueDraw;
+        img.src = me.avatarUrl;
+      } else {
+        ctx.fillStyle = '#c8a45c';
+        ctx.font = '700 64px "Playfair Display", serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText((me.name || 'L').slice(0, 1), photoX + photoW / 2, photoY + photoH / 2);
+        continueDraw();
+      }
+
+      function continueDraw() {
+        // 姓名
+        ctx.fillStyle = '#f6e7c4';
+        ctx.font = '700 38px "Playfair Display", serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        ctx.fillText(me.name || '—', 300, 280);
+
+        // 信息行
+        const rows = [
+          ['参赛证号', reg.certNo, true],
+          ['组别 / 专业', `${me.group || '—'}  ·  ${major}`],
+          ['所在学校', me.school || '—'],
+          ['比赛日期', F.dateLabel],
+          ['比赛场馆', `${F.city} · ${F.venue}`],
+          ['参赛曲目', reg.works[0] ? `① ${reg.works[0].title}` : '—'],
+          ['',         reg.works[1] ? `② ${reg.works[1].title}` : '']
+        ];
+        let y = 360;
+        ctx.font = '400 18px "Inter", sans-serif';
+        rows.forEach(([k, v, gold]) => {
+          if (!k && !v) { y += 8; return; }
+          ctx.fillStyle = '#a89880';
+          ctx.fillText(k, 300, y);
+          ctx.fillStyle = gold ? '#c8a45c' : '#e6dcc8';
+          ctx.font = gold ? '600 22px "Inter", monospace' : '400 18px "Inter", sans-serif';
+          ctx.fillText(v, 410, y);
+          ctx.font = '400 18px "Inter", sans-serif';
+          // 虚线
+          ctx.strokeStyle = 'rgba(200,164,92,.2)';
+          ctx.setLineDash([2, 4]);
+          ctx.beginPath();
+          ctx.moveTo(300, y + 28);
+          ctx.lineTo(W - 80, y + 28);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          y += 38;
+        });
+
+        // 印章
+        const cx = W - 180, cy = H - 130;
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(-0.21);
+        ctx.strokeStyle = 'rgba(199,85,85,.65)';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(0, 0, 70, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(0, 0, 58, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(199,85,85,.7)';
+        ctx.font = '700 26px "Playfair Display", serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('★', 0, -18);
+        ctx.font = '600 16px "Playfair Display", serif';
+        ctx.fillText('LISZT', 0, 12);
+        ctx.font = '400 10px "Inter", sans-serif';
+        ctx.fillText('FINALS', 0, 32);
+        ctx.restore();
+
+        // 签发日期
+        ctx.fillStyle = '#a89880';
+        ctx.font = '400 16px "Inter", sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        ctx.fillText('签发日期：' + LisztUtil.formatDate(new Date().toISOString()).slice(0, 10), 100, H - 90);
+        ctx.fillText('李斯特国际青少年钢琴大赛 组委会', 100, H - 60);
+
+        resolve();
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>

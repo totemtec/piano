@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>成绩查询 · 赛后回顾</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .round-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; }
+    .round-tab { padding: 10px 20px; border-radius: 999px; background: rgba(20,17,13,.6); border: 1px solid rgba(200,164,92,.25); color: var(--color-text-2); cursor: pointer; transition: all .2s; }
+    .round-tab.active { background: linear-gradient(135deg, rgba(200,164,92,.2), rgba(200,164,92,.05)); border-color: var(--color-gold-2); color: var(--color-gold-2); font-weight: 600; }
+    .round-tab .badge { display: inline-block; padding: 1px 8px; background: rgba(200,164,92,.2); border-radius: 999px; font-size: .78rem; margin-left: 6px; }
+    .score-card { background: linear-gradient(180deg, rgba(28,24,18,.85), rgba(20,17,13,.85)); border: 1px solid var(--color-border); border-radius: 14px; padding: 24px; margin-bottom: 16px; }
+    .score-card-head { display: flex; gap: 16px; align-items: center; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid rgba(200,164,92,.2); }
+    .score-card-head .ic { font-size: 2rem; }
+    .score-card-head .info { flex: 1; }
+    .score-card-head .info h3 { font-family: var(--font-serif); font-size: 1.2rem; margin: 0 0 4px; }
+    .score-card-head .info .meta { font-size: .85rem; color: var(--color-text-dim); }
+    .judge-row { display: grid; grid-template-columns: 50px 1fr auto; gap: 14px; padding: 12px; background: rgba(12,10,8,.4); border-radius: 8px; margin-bottom: 8px; align-items: center; }
+    .judge-row .ja { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; }
+    .judge-row .jb { font-size: .95rem; font-weight: 600; color: var(--color-text); }
+    .judge-row .jc { font-size: .82rem; color: var(--color-text-dim); margin-top: 2px; }
+    .judge-row .jd { font-family: var(--font-serif); font-size: 1.15rem; color: var(--color-gold-2); font-weight: 600; }
+    .comment-block { padding: 12px 16px; background: rgba(200,164,92,.06); border-left: 3px solid var(--color-gold-2); border-radius: 4px; font-size: .9rem; line-height: 1.6; color: var(--color-text-2); margin-top: 8px; }
+    .avg-banner { padding: 14px 18px; background: linear-gradient(135deg, rgba(200,164,92,.18), rgba(200,164,92,.05)); border: 1px solid rgba(200,164,92,.4); border-radius: 10px; display: flex; align-items: center; gap: 14px; margin-top: 14px; }
+    .avg-banner .lb { color: var(--color-text-2); font-size: .9rem; }
+    .avg-banner .vl { font-family: var(--font-serif); font-size: 1.8rem; color: var(--color-gold-2); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="brand-logo">L</span><span>Liszt IPC<small>李斯特国际青少年钢琴大赛</small></span></a>
+    <nav class="nav-links"></nav>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions"></div>
+  </div>
+</header>
+
+<section class="page-hero" style="padding: 60px 24px 30px;">
+  <div class="page-hero-inner">
+    <span class="eyebrow">RESULTS</span>
+    <h1>我的成绩</h1>
+    <p class="sub" id="resultsSub">查看海选（线上）+ 决赛（线下现场）两阶段的成绩与评委评语</p>
+  </div>
+</section>
+
+<main class="round-shell" style="padding-top: 24px;">
+  <!-- 选手基本信息 -->
+  <div id="userHeader"></div>
+
+  <!-- 阶段切换 -->
+  <div class="round-tabs">
+    <button class="round-tab active" data-round="prelim">🎬 海选（线上）</button>
+    <button class="round-tab" data-round="final">🏆 决赛（线下现场）</button>
+  </div>
+
+  <!-- 内容区 -->
+  <div id="roundContent"></div>
+
+  <div class="actions-row" style="justify-content: center; margin-top: 32px;">
+    <a class="btn btn-primary" href="recap-cert.html">下载电子证书</a>
+    <a class="btn btn-ghost" href="recap.html">返回赛后回顾</a>
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+  const me = LisztAuth.current;
+  if (!me) { location.href = 'login.html?next=recap-results.html'; return; }
+  if (me.role !== 'contestant') { LisztUtil.toast('仅选手可查看自己的成绩', 'error'); setTimeout(() => location.href = 'recap.html', 1000); return; }
+
+  // 选手头部
+  const genderLabel = me.gender === 'male' ? '男' : me.gender === 'female' ? '女' : '—';
+  document.getElementById('userHeader').innerHTML = `
+    <div class="reg-form-card" style="display: flex; gap: 20px; align-items: center; padding: 20px 24px;">
+      <div class="reg-avatar" style="margin: 0;">${me.avatarUrl ? `<img src="${LisztUtil.escape(me.avatarUrl)}" alt="头像">` : LisztUtil.escape((me.name || 'L').slice(0,1))}</div>
+      <div style="flex: 1;">
+        <div style="font-family: var(--font-serif); font-size: 1.4rem; color: var(--color-text);">${LisztUtil.escape(me.name || '—')}</div>
+        <div class="muted" style="font-size: .9rem; margin-top: 4px;">
+          <span class="tag tag-cat">${LisztUtil.escape((LisztData.MAJORS.find(m => m.key === me.major) || {}).label || '—')}</span>
+          <span class="tag">${LisztUtil.escape(me.group || '—')}</span>
+          <span>${genderLabel}</span>
+          <span>· ${LisztUtil.escape(me.school || '—')}</span>
+        </div>
+      </div>
+    </div>
+  `;
+
+  let currentRound = 'prelim';
+
+  // 海选数据
+  const myVideo = LisztStore.myVideo(me.id);
+  const prelimScores = myVideo ? LisztStore.scoresForVideo(myVideo.id) : [];
+  const prelimAvg = prelimScores.length ? prelimScores.reduce((a, b) => a + b.overall, 0) / prelimScores.length : null;
+
+  // 决赛数据
+  const myReg = LisztStore.myFinalReg(me.id);
+  const finalScores = myReg ? LisztStore.scoresForFinalReg(myReg.id) : [];
+  const finalAvg = finalScores.length ? finalScores.reduce((a, b) => a + b.overall, 0) / finalScores.length : null;
+
+  function render() {
+    const wrap = document.getElementById('roundContent');
+    if (currentRound === 'prelim') {
+      if (!myVideo) {
+        wrap.innerHTML = `<div class="alert alert-info">您尚未提交海选作品。</div>`;
+        return;
+      }
+      wrap.innerHTML = `
+        <div class="score-card">
+          <div class="score-card-head">
+            <div class="ic">🎬</div>
+            <div class="info">
+              <h3>${LisztUtil.escape(myVideo.title)}</h3>
+              <div class="meta">${LisztUtil.escape(myVideo.composer || '—')} · ${LisztUtil.escape(myVideo.group || '—')} · 上传于 ${LisztUtil.formatDate(myVideo.uploadedAt)}</div>
+            </div>
+            <div class="muted" style="text-align: right;">
+              <div style="font-size: .82rem;">状态</div>
+              <div style="color: ${prelimScores.length >= 3 ? '#b6e3c8' : 'var(--color-gold-2)'};">${prelimScores.length >= 3 ? '✓ 已完成' : '评审中'}</div>
+            </div>
+          </div>
+          ${prelimScores.length === 0 ? '<div class="alert alert-info">评委正在评审中，请耐心等待。</div>' : ''}
+          ${prelimScores.map(s => {
+            const j = LisztData.SEED_JUDGES.find(x => x.id === s.judgeId) || { name: s.judgeName, avatarColor: 'linear-gradient(135deg, #c8a45c, #8a6a2c)' };
+            return `
+              <div class="judge-row">
+                <div class="ja" style="background:${j.avatarColor};">${LisztUtil.escape((j.name || s.judgeName || 'J').slice(0,1))}</div>
+                <div>
+                  <div class="jb">${LisztUtil.escape(s.judgeName)}</div>
+                  <div class="jc">${LisztUtil.formatDate(s.scoredAt)}</div>
+                </div>
+                <div class="jd">★ ${s.overall.toFixed(2)}</div>
+              </div>
+              <div class="comment-block">${LisztUtil.escape(s.comment || '评委未留评语')}</div>
+            `;
+          }).join('')}
+          ${prelimAvg !== null ? `
+            <div class="avg-banner">
+              <div class="lb">综合均分（${prelimScores.length} 位评委）</div>
+              <div class="vl">★ ${prelimAvg.toFixed(2)}</div>
+              <div class="muted" style="margin-left: auto; font-size: .85rem;">
+                ${prelimAvg >= LisztData.PROMOTION_SCORE ? '✅ 已晋级决赛' : '未达晋级线 (' + LisztData.PROMOTION_SCORE_LABEL + ')'}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    } else {
+      if (!myReg) {
+        wrap.innerHTML = `<div class="alert alert-info">您未参加本届决赛。</div>`;
+        return;
+      }
+      wrap.innerHTML = `
+        <div class="score-card">
+          <div class="score-card-head">
+            <div class="ic">🏆</div>
+            <div class="info">
+              <h3>决赛参赛曲目</h3>
+              <div class="meta">${myReg.works.map((w, i) => `① ${LisztUtil.escape(w.title)}`).join(' · ')}<br>${myReg.works.map((w, i) => `② ${LisztUtil.escape(w.title)}`).join(' · ')}</div>
+            </div>
+            <div class="muted" style="text-align: right;">
+              <div style="font-size: .82rem;">参赛证号</div>
+              <div class="kbd-like">${LisztUtil.escape(myReg.certNo)}</div>
+            </div>
+          </div>
+          ${finalScores.length === 0 ? '<div class="alert alert-info">现场评分进行中，请关注颁奖音乐会公告。</div>' : ''}
+          ${finalScores.map(s => {
+            const j = LisztData.FINAL_JUDGES.find(x => x.id === s.judgeId) || { name: s.judgeName, avatarColor: 'linear-gradient(135deg, #c8a45c, #8a6a2c)' };
+            return `
+              <div class="judge-row">
+                <div class="ja" style="background:${j.avatarColor || 'linear-gradient(135deg, #c8a45c, #8a6a2c)'};">${LisztUtil.escape((j.name || s.judgeName || 'J').slice(0,1))}</div>
+                <div>
+                  <div class="jb">${LisztUtil.escape(s.judgeName)}</div>
+                  <div class="jc">${LisztUtil.formatDate(s.scoredAt)} · 现场评分</div>
+                </div>
+                <div class="jd">★ ${s.overall.toFixed(2)}</div>
+              </div>
+              <div class="comment-block">${LisztUtil.escape(s.comment || '评委未留评语')}</div>
+            `;
+          }).join('')}
+          ${finalAvg !== null ? `
+            <div class="avg-banner">
+              <div class="lb">现场均分（${finalScores.length} 位评委）</div>
+              <div class="vl">★ ${finalAvg.toFixed(2)}</div>
+              <div class="muted" style="margin-left: auto; font-size: .85rem;">来自 ${finalScores.length} 位国际评委</div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+  }
+  render();
+
+  // 切换
+  document.querySelectorAll('.round-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.round-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentRound = btn.dataset.round;
+      render();
+    });
+  });
+})();
+</script>
+</body>
+</html>

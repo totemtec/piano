@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>报名详情 · 李斯特国际青少年钢琴大赛</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .reg-shell { max-width: 1080px; margin: 0 auto; padding: 32px 28px 80px; }
+    .reg-hero { text-align: center; padding: 16px 24px 28px; }
+    .reg-hero h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 3.4vw, 2.4rem);
+      margin: 8px 0 10px;
+    }
+    .reg-hero .eyebrow { color: var(--color-gold-2); letter-spacing: .14em; text-transform: uppercase; font-size: .82rem; font-weight: 600; }
+
+    .status-board {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+      margin: 24px 0;
+    }
+    .status-pill {
+      padding: 14px 16px; border-radius: 12px;
+      background: rgba(20,17,13,.6);
+      border: 1px solid rgba(200,164,92,.28);
+      text-align: center;
+    }
+    .status-pill.done { border-color: rgba(79,157,111,.6); background: rgba(79,157,111,.1); }
+    .status-pill.warn { border-color: rgba(200,164,92,.6); background: rgba(200,164,92,.12); }
+    .status-pill .ic { font-size: 1.4rem; margin-bottom: 4px; }
+    .status-pill .lb { font-size: .78rem; color: var(--color-text-dim); }
+    .status-pill .vl { font-weight: 600; margin-top: 2px; }
+
+    .reg-card {
+      background: linear-gradient(180deg, rgba(28,24,18,.85), rgba(20,17,13,.85));
+      border: 1px solid var(--color-border);
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 20px;
+    }
+    .reg-card h2 {
+      font-family: var(--font-serif);
+      font-size: 1.25rem; margin: 0 0 16px;
+      padding-bottom: 10px; border-bottom: 1px solid rgba(200,164,92,.2);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .reg-card h2 .ic { color: var(--color-gold-2); }
+
+    .reg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; }
+    .reg-row { display: flex; flex-direction: column; }
+    .reg-row .lb { font-size: .78rem; color: var(--color-text-dim); margin-bottom: 2px; }
+    .reg-row .vl { font-size: 1rem; color: var(--color-text); font-weight: 500; word-break: break-all; }
+    .reg-row .vl.muted { color: var(--color-text-dim); font-weight: 400; }
+
+    .fee-banner {
+      padding: 18px 22px; border-radius: 12px;
+      background: linear-gradient(135deg, rgba(79,157,111,.18), rgba(79,157,111,.05));
+      border: 1px solid rgba(79,157,111,.5);
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .fee-banner.unpaid {
+      background: linear-gradient(135deg, rgba(200,164,92,.18), rgba(200,164,92,.05));
+      border-color: rgba(200,164,92,.5);
+    }
+    .fee-banner .check { font-size: 1.8rem; }
+    .fee-banner .info { flex: 1; min-width: 200px; }
+    .fee-banner .info .t { font-size: 1.1rem; font-weight: 600; }
+    .fee-banner .info .s { font-size: .85rem; color: var(--color-text-dim); margin-top: 2px; }
+
+    .account-box {
+      background: rgba(12,10,8,.5); border: 1px dashed rgba(200,164,92,.35);
+      border-radius: 8px; padding: 14px 16px; font-family: ui-monospace, "Cascadia Code", monospace;
+      font-size: .9rem; line-height: 1.7;
+    }
+    .account-box .row { display: flex; justify-content: space-between; gap: 12px; }
+    .account-box .row .k { color: var(--color-text-dim); }
+
+    .video-card {
+      display: flex; gap: 14px; align-items: center;
+      padding: 14px; border-radius: 10px;
+      background: rgba(12,10,8,.4); border: 1px solid rgba(200,164,92,.2);
+    }
+    .video-card .thumb { width: 120px; height: 68px; background: #1a1410; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0; }
+    .video-card .info { flex: 1; min-width: 0; }
+    .video-card .info h4 { margin: 0 0 4px; font-family: var(--font-serif); font-size: 1.05rem; }
+    .video-card .info .meta { font-size: .82rem; color: var(--color-text-dim); }
+
+    .actions-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+    .actions-row .btn { flex: 0 1 auto; }
+
+    .edit-window {
+      background: rgba(79,157,111,.1); border: 1px solid rgba(79,157,111,.4);
+      border-radius: 10px; padding: 14px 18px; font-size: .9rem; margin-bottom: 14px;
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .edit-window.expired { background: rgba(199,85,85,.1); border-color: rgba(199,85,85,.4); }
+    .edit-window.pending { background: rgba(200,164,92,.08); border-color: rgba(200,164,92,.4); }
+    .edit-window .ew-icon { font-size: 1.6rem; line-height: 1; flex-shrink: 0; }
+    .edit-window .ew-body { flex: 1; min-width: 0; }
+    .edit-window .ew-body strong { color: var(--color-text); display: block; margin-bottom: 4px; }
+    .edit-window .ew-progress {
+      margin-top: 10px; height: 4px; border-radius: 2px;
+      background: rgba(0,0,0,.25); overflow: hidden;
+    }
+    .edit-window .ew-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--color-gold), var(--color-gold-2));
+      transition: width .4s ease;
+    }
+    .edit-window.expired .ew-bar { background: linear-gradient(90deg, #c75555, #6b2828); }
+
+    /* 编辑表单 */
+    .edit-form .field { margin-bottom: 12px; }
+    .edit-form .field label { display: block; font-size: .85rem; color: var(--color-text-dim); margin-bottom: 4px; }
+    .edit-form input, .edit-form select, .edit-form textarea {
+      width: 100%; padding: 9px 12px; border-radius: 8px;
+      background: rgba(12,10,8,.5); border: 1px solid var(--color-border);
+      color: var(--color-text); font-family: inherit; font-size: .95rem;
+    }
+    .edit-form input:focus, .edit-form select:focus, .edit-form textarea:focus { outline: none; border-color: var(--color-gold); }
+    .edit-form .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    @media (max-width: 720px) {
+      .status-board { grid-template-columns: 1fr 1fr; }
+      .reg-grid { grid-template-columns: 1fr; }
+      .edit-form .field-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-logo">L</span>
+      <span>Liszt IPC<small>报名详情</small></span>
+    </a>
+    <nav class="nav-links" data-managed="1">
+      <a href="index.html">首页</a>
+      <a href="registration.html" class="active">报名详情</a>
+      <a href="upload.html">上传作品</a>
+      <a href="result.html">我的成绩</a>
+    </nav>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions"></div>
+  </div>
+</header>
+
+<main class="reg-shell">
+  <div class="reg-hero">
+    <div class="eyebrow">Registration Details</div>
+    <h1>我的报名信息</h1>
+    <p class="muted">查看您的报名、缴费与作品状态。截止前 20 日内可修改报名信息。</p>
+  </div>
+
+  <!-- 状态总览 -->
+  <div class="status-board" id="statusBoard"></div>
+
+  <!-- 修改窗口提示 -->
+  <div id="editWindow" class="edit-window" style="display:none;"></div>
+
+  <!-- 报名信息 -->
+  <div class="reg-card" id="infoCard">
+    <h2><span class="ic">👤</span> 报名信息</h2>
+    <div id="regInfoView"></div>
+  </div>
+
+  <!-- 缴费信息 -->
+  <div class="reg-card" id="feeCard">
+    <h2><span class="ic">💳</span> 缴费信息</h2>
+    <div id="feeInfo"></div>
+  </div>
+
+  <!-- 作品信息 -->
+  <div class="reg-card" id="videoCard">
+    <h2><span class="ic">🎬</span> 参赛作品</h2>
+    <div id="videoInfo"></div>
+  </div>
+
+  <div class="actions-row" id="bottomActions"></div>
+</main>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modalInner"></div></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+  const me = LisztAuth.current;
+  if (!me) { location.href = 'login.html?next=registration.html'; return; }
+  if (me.role !== 'contestant') { location.href = me.role === 'judge' ? 'score.html' : 'admin.html'; return; }
+
+  const MAJORS = LisztData.MAJORS;
+  const FEE = LisztData.SEED_COMPETITION.feeAmount;
+  const DEADLINE = new Date(LisztData.SEED_COMPETITION.deadline);
+
+  // 20 日修改窗口
+  const daysLeft = (DEADLINE - Date.now()) / 86400000;
+  const canEdit = daysLeft > 0 && daysLeft <= 60;   // 20 日内可改（放宽到 60 日演示）
+  // 实际规则：距截止 20 天以上不可改（逾期）；<=20 天可改；已截止不可改
+  // 演示数据：截止是 2026-12-31，所以"现在"是 2026-10-13 -> 还有 79 天 -> 实际不可改
+  const actuallyEditable = daysLeft > 0 && daysLeft <= 20;
+
+  const myVideo = LisztStore.videosBy(v => v.contestantId === me.id)[0];
+  const myScores = myVideo ? LisztStore.scoresForVideo(myVideo.id) : [];
+
+  // =============== 渲染 ===============
+  function render() {
+    // 状态总览
+    const steps = [
+      { ic: '📝', lb: '1. 注册账号', vl: me.createdAt ? LisztUtil.formatDate(me.createdAt) : '已完成', done: true },
+      { ic: '💳', lb: '2. 缴纳报名费', vl: me.feePaid ? `已缴（￥${me.feeAmount || FEE}）` : `未缴（￥${FEE}）`, done: me.feePaid, warn: !me.feePaid },
+      { ic: '🎬', lb: '3. 上传作品', vl: myVideo ? '已上传' : '未上传', done: !!myVideo, warn: !myVideo },
+      { ic: '📊', lb: '4. 评委评分', vl: myScores.length ? `${myScores.length} 位评委已评` : '评审中', done: myScores.length >= 3, warn: myScores.length > 0 && myScores.length < 3 }
+    ];
+    document.getElementById('statusBoard').innerHTML = steps.map(s => `
+      <div class="status-pill ${s.done ? 'done' : (s.warn ? 'warn' : '')}">
+        <div class="ic">${s.ic}</div>
+        <div class="lb">${s.lb}</div>
+        <div class="vl">${s.vl}</div>
+      </div>
+    `).join('');
+
+    // 修改窗口提示（P1-4：4 种状态机 + 倒计时进度条）
+    const ew = document.getElementById('editWindow');
+    const openAt = new Date(DEADLINE.getTime() - 20 * 86400000);
+    const openIn = (openAt - Date.now()) / 86400000;
+    const progressPct = Math.max(0, Math.min(100, (1 - daysLeft / 79) * 100)); // 79 天视为总周期
+    if (daysLeft <= 0) {
+      ew.style.display = '';
+      ew.className = 'edit-window expired';
+      ew.innerHTML = `<div class="ew-icon">⛔</div>
+        <div class="ew-body">
+          <strong>报名已截止</strong>
+          <div class="muted">截止于 ${LisztUtil.formatDate(DEADLINE)}，报名信息不可修改。</div>
+        </div>`;
+    } else if (actuallyEditable) {
+      ew.style.display = '';
+      ew.className = 'edit-window open';
+      ew.innerHTML = `<div class="ew-icon">✓</div>
+        <div class="ew-body">
+          <strong>当前处于可修改窗口</strong>
+          <div class="muted">距截止还剩 <strong style="color:var(--color-gold-2);">${Math.ceil(daysLeft)}</strong> 天，报名信息可随时修改。</div>
+          <div class="ew-progress"><div class="ew-bar" style="width:${progressPct}%"></div></div>
+        </div>`;
+    } else if (openIn > 0) {
+      ew.style.display = '';
+      ew.className = 'edit-window pending';
+      ew.innerHTML = `<div class="ew-icon">⏰</div>
+        <div class="ew-body">
+          <strong>距报名截止 ${Math.ceil(daysLeft)} 天 · 修改窗口未开放</strong>
+          <div class="muted">根据规则，<strong>仅在截止前 20 天内</strong>可修改报名信息。修改窗口将于 <strong>${LisztUtil.formatDate(openAt)}</strong> 开放，还差 <strong style="color:var(--color-gold-2);">${Math.ceil(openIn)}</strong> 天。</div>
+          <div class="ew-progress"><div class="ew-bar" style="width:${progressPct}%"></div></div>
+        </div>`;
+    } else {
+      ew.style.display = '';
+      ew.className = 'edit-window pending';
+      ew.innerHTML = `<div class="ew-icon">⏰</div>
+        <div class="ew-body">
+          <strong>距报名截止 ${Math.ceil(daysLeft)} 天</strong>
+          <div class="muted">修改窗口已开放但未达到 20 天阈值，请稍候。</div>
+          <div class="ew-progress"><div class="ew-bar" style="width:${progressPct}%"></div></div>
+        </div>`;
+    }
+
+    // 报名信息
+    const major = MAJORS.find(m => m.key === me.major) || { label: '—' };
+    const genderLabel = me.gender === 'male' ? '男' : me.gender === 'female' ? '女' : '—';
+    const avatarHTML = me.avatarUrl
+      ? `<img src="${LisztUtil.escape(me.avatarUrl)}" alt="头像">`
+      : LisztUtil.escape((me.name || me.username || 'U').slice(0, 1));
+    document.getElementById('regInfoView').innerHTML = `
+      <div class="reg-hero-row">
+        <div class="reg-avatar">${avatarHTML}</div>
+        <div class="reg-id">
+          <div class="reg-name">${LisztUtil.escape(me.name || '—')}</div>
+          <div class="reg-sub">
+            <span class="tag tag-cat">${LisztUtil.escape(major.label || '—')}</span>
+            <span class="tag">${LisztUtil.escape(me.group || '—')}</span>
+            <span class="tag">${genderLabel}</span>
+            <span class="muted">参赛编号 LISZT-${(me.id || '').slice(-6).toUpperCase()}</span>
+          </div>
+        </div>
+      </div>
+      <div class="reg-grid">
+        <div class="reg-row"><div class="lb">账号</div><div class="vl">${LisztUtil.escape(me.username)}</div></div>
+        <div class="reg-row"><div class="lb">出生年月</div><div class="vl">${LisztUtil.escape(me.birth || '—')}</div></div>
+        <div class="reg-row"><div class="lb">年龄</div><div class="vl">${me.age || '—'}</div></div>
+        <div class="reg-row"><div class="lb">身份证号</div><div class="vl kbd-like">${LisztUtil.maskIdCard(me.idCard) || '<span class="muted">未填写</span>'}</div></div>
+        <div class="reg-row"><div class="lb">手机号</div><div class="vl">${LisztUtil.escape(me.phone || '—')}</div></div>
+        <div class="reg-row"><div class="lb">邮箱</div><div class="vl">${LisztUtil.escape(me.email || '—')}</div></div>
+        <div class="reg-row"><div class="lb">所在学校</div><div class="vl">${LisztUtil.escape(me.school || '—')}</div></div>
+        <div class="reg-row"><div class="lb">指导教师</div><div class="vl">${LisztUtil.escape(me.teacher || '—')}</div></div>
+        <div class="reg-row"><div class="lb">注册时间</div><div class="vl">${me.createdAt ? LisztUtil.formatDate(me.createdAt) : '—'}</div></div>
+        <div class="reg-row"><div class="lb">参赛编号</div><div class="vl kbd-like">LISZT-${(me.id || '').slice(-6).toUpperCase()}</div></div>
+      </div>
+      <div class="avatar-edit-row">
+        <label class="btn btn-ghost btn-sm" for="avatarEditInput" style="cursor:pointer;">更换头像</label>
+        <input type="file" id="avatarEditInput" accept="image/png,image/jpeg,image/webp" hidden>
+        <span class="muted" style="font-size:.82rem;">支持 PNG / JPG / WebP · 不超过 2 MB</span>
+      </div>
+    `;
+
+    // 头像即时更换
+    const avatarInput = document.getElementById('avatarEditInput');
+    if (avatarInput) {
+      avatarInput.addEventListener('change', async () => {
+        const file = avatarInput.files && avatarInput.files[0];
+        if (!file) return;
+        if (file.size > 2 * 1024 * 1024) { LisztUtil.toast('头像大小不能超过 2 MB', 'error'); avatarInput.value = ''; return; }
+        try {
+          const dataUrl = await LisztUtil.compressImage(file, 320, 0.85);
+          const users = LisztStore.getUsers();
+          const idx = users.findIndex(u => u.id === me.id);
+          if (idx >= 0) { users[idx].avatarUrl = dataUrl; LisztStore.setUsers(users); }
+          LisztUtil.toast('头像已更新', 'success');
+          setTimeout(() => location.reload(), 500);
+        } catch (err) { LisztUtil.toast('头像读取失败：' + err.message, 'error'); }
+      });
+    }
+
+    // 缴费信息
+    renderFee();
+
+    // 作品信息
+    if (myVideo) {
+      document.getElementById('videoInfo').innerHTML = `
+        <div class="video-card">
+          <div class="thumb">🎬</div>
+          <div class="info">
+            <h4>${LisztUtil.escape(myVideo.title)}</h4>
+            <div class="meta">
+              ${LisztUtil.escape(myVideo.composer || '—')} · ${LisztUtil.escape(myVideo.group)} · ${LisztUtil.formatDuration(myVideo.duration || 0)} ·
+              ${LisztUtil.formatSize(myVideo.size || 0)} · ${myVideo.resolution || '—'}
+            </div>
+            <div class="meta">
+              上传于 ${LisztUtil.formatDate(myVideo.uploadedAt)} ·
+              <span style="color: var(--color-gold-2);">${myScores.length} 位评委已评</span>
+            </div>
+          </div>
+        </div>
+        <div class="actions-row">
+          <a class="btn btn-ghost" href="result.html?vid=${myVideo.id}">查看成绩 →</a>
+          <a class="btn btn-ghost" href="upload.html">修改作品</a>
+        </div>
+      `;
+    } else {
+      document.getElementById('videoInfo').innerHTML = `
+        <p class="muted" style="margin: 8px 0 16px;">尚未上传参赛作品。每人限传 1 件。</p>
+        <a class="btn btn-primary" href="upload.html">📤 立即上传</a>
+      `;
+    }
+
+    // 底部操作
+    const ba = document.getElementById('bottomActions');
+    ba.innerHTML = `
+      <button class="btn btn-ghost" id="btnExport">📄 导出报名表</button>
+      ${actuallyEditable ? '<button class="btn btn-primary" id="btnEdit">✎ 修改报名信息</button>' : '<button class="btn btn-ghost" disabled title="仅在截止前 20 天内可修改">✎ 修改报名信息</button>'}
+      <a class="btn btn-ghost" href="index.html">返回首页</a>
+    `;
+    document.getElementById('btnExport').addEventListener('click', exportReg);
+    const btnEdit = document.getElementById('btnEdit');
+    if (btnEdit) btnEdit.addEventListener('click', enterEdit);
+  }
+
+  function renderFee() {
+    const acc = LisztData.SEED_COMPETITION.feeAccount;
+    const wrap = document.getElementById('feeInfo');
+    if (me.feePaid) {
+      wrap.innerHTML = `
+        <div class="fee-banner">
+          <div class="check">✅</div>
+          <div class="info">
+            <div class="t">报名费已缴纳</div>
+            <div class="s">金额 ￥${me.feeAmount} · 方式 ${paymentMethod(me.feeMethod)} · ${LisztUtil.formatDate(me.feeAt)} · 凭证 ${me.feeReceipt || '—'}</div>
+          </div>
+        </div>
+      `;
+    } else {
+      wrap.innerHTML = `
+        <div class="fee-banner unpaid">
+          <div class="check">⏳</div>
+          <div class="info">
+            <div class="t">报名费待缴纳（￥${FEE}）</div>
+            <div class="s">请于截止日期前完成缴费。可通过以下任一方式：</div>
+          </div>
+        </div>
+        <div class="account-box">
+          <div class="row"><span class="k">开户银行</span><span>${LisztUtil.escape(acc.bank)}</span></div>
+          <div class="row"><span class="k">账户名</span><span>${LisztUtil.escape(acc.accountName)}</span></div>
+          <div class="row"><span class="k">账号</span><span>${LisztUtil.escape(acc.accountNo)}</span></div>
+          <div class="row"><span class="k">支付宝</span><span>${LisztUtil.escape(acc.alipay)}</span></div>
+          <div class="row"><span class="k">微信</span><span>${LisztUtil.escape(acc.wechat)}</span></div>
+        </div>
+        <p class="muted" style="font-size:.85rem; margin-top:12px;">💡 转账时请备注"姓名 + 账号"，缴费完成将由组委会核对后标记为已缴。</p>
+      `;
+    }
+  }
+
+  function paymentMethod(m) {
+    return { alipay: '支付宝', wechat: '微信', bank: '银行转账' }[m] || '—';
+  }
+
+  // =============== 编辑模式 ===============
+  function enterEdit() {
+    const card = document.getElementById('infoCard');
+    card.innerHTML = `
+      <h2><span class="ic">✎</span> 修改报名信息</h2>
+      <form class="edit-form" id="editForm">
+        <div class="register-top">
+          <div class="avatar-uploader">
+            <input type="file" id="avatarEditInput2" accept="image/png,image/jpeg,image/webp" hidden>
+            <div class="avatar-preview ${me.avatarUrl ? 'has-image' : ''}" id="avatarEditPreview" aria-label="点击更换头像">
+              ${me.avatarUrl
+                ? `<img src="${LisztUtil.escape(me.avatarUrl)}" alt="头像">`
+                : `<span class="avatar-ph">+ 上传头像</span>`}
+            </div>
+            <div class="avatar-tip">支持 JPG / PNG / WebP · 不超过 2 MB</div>
+          </div>
+          <div class="idcard-block">
+            <div class="field">
+              <label>身份证号 *</label>
+              <input type="text" name="idCard" id="idCardInput2" value="${LisztUtil.escape(me.idCard || '')}" required maxlength="18"
+                     pattern="[1-9]\d{5}(?:18|19|20)\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])\d{3}[\dXx]"
+                     placeholder="18 位居民身份证号">
+            </div>
+            <div class="idcard-meta" id="idCardMeta2" style="${me.idCard ? '' : 'display:none;'};">
+              <span class="idcard-tag">✓ 校验通过</span>
+              <span class="muted" id="idCardDerived2"></span>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>真实姓名 *</label>
+            <input type="text" name="name" value="${LisztUtil.escape(me.name || '')}" required>
+          </div>
+          <div class="field">
+            <label>性别 *</label>
+            <select name="gender" required>
+              <option value="">请选择</option>
+              <option value="male" ${me.gender === 'male' ? 'selected' : ''}>男</option>
+              <option value="female" ${me.gender === 'female' ? 'selected' : ''}>女</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>出生年月</label>
+            <input type="text" name="birth" value="${LisztUtil.escape(me.birth || '')}" readonly>
+          </div>
+          <div class="field">
+            <label>年龄</label>
+            <input type="number" name="age" min="6" max="22" value="${me.age || ''}">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>参赛专业（不可修改）</label>
+            <input type="text" value="${(MAJORS.find(m => m.key === me.major) || {}).label || '—'}" disabled>
+          </div>
+          <div class="field">
+            <label>参赛组别 *</label>
+            <select name="group" required>
+              <option value="">请选择</option>
+              ${(MAJORS.find(m => m.key === me.major) || { groups: [] }).groups.map(g => `<option ${g === me.group ? 'selected' : ''}>${g}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>手机号 *</label>
+            <input type="tel" name="phone" value="${LisztUtil.escape(me.phone || '')}" required pattern="1[3-9]\\d{9}">
+          </div>
+          <div class="field">
+            <label>邮箱</label>
+            <input type="email" name="email" value="${LisztUtil.escape(me.email || '')}">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>所在学校 / 机构</label>
+            <input type="text" name="school" value="${LisztUtil.escape(me.school || '')}">
+          </div>
+          <div class="field">
+            <label>指导教师</label>
+            <input type="text" name="teacher" value="${LisztUtil.escape(me.teacher || '')}">
+          </div>
+        </div>
+        <div class="actions-row">
+          <button type="submit" class="btn btn-primary">保存修改</button>
+          <button type="button" class="btn btn-ghost" id="btnCancelEdit">取消</button>
+        </div>
+      </form>
+    `;
+    // 头像编辑
+    const editAvatarInput = document.getElementById('avatarEditInput2');
+    const editAvatarPreview = document.getElementById('avatarEditPreview');
+    window.__pendingEditAvatar = null;
+    editAvatarPreview.addEventListener('click', () => editAvatarInput.click());
+    editAvatarInput.addEventListener('change', async () => {
+      const file = editAvatarInput.files && editAvatarInput.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) { LisztUtil.toast('头像大小不能超过 2 MB', 'error'); editAvatarInput.value = ''; return; }
+      try {
+        const dataUrl = await LisztUtil.compressImage(file, 320, 0.85);
+        editAvatarPreview.classList.add('has-image');
+        editAvatarPreview.innerHTML = `<img src="${dataUrl}" alt="头像预览">`;
+        window.__pendingEditAvatar = dataUrl;
+      } catch (err) { LisztUtil.toast('头像读取失败：' + err.message, 'error'); }
+    });
+    // 身份证号编辑
+    const idInput2 = document.getElementById('idCardInput2');
+    const meta2 = document.getElementById('idCardMeta2');
+    const derived2 = document.getElementById('idCardDerived2');
+    const birthInput2 = card.querySelector('input[name="birth"]');
+    if (idInput2.value && LisztUtil.isValidIdCard(idInput2.value)) {
+      const info = LisztUtil.parseIdCard(idInput2.value);
+      derived2.textContent = `出生 ${info.birth} · ${info.genderLabel} · ${info.region}`;
+    }
+    idInput2.addEventListener('input', () => {
+      const v = idInput2.value.trim().toUpperCase();
+      if (v.length < 18) { meta2.style.display = 'none'; return; }
+      if (LisztUtil.isValidIdCard(v)) {
+        const info = LisztUtil.parseIdCard(v);
+        meta2.style.display = '';
+        derived2.textContent = `出生 ${info.birth} · ${info.genderLabel} · ${info.region}`;
+        derived2.style.color = '';
+        if (birthInput2) birthInput2.value = info.birth;
+      } else {
+        meta2.style.display = '';
+        derived2.textContent = '✗ 身份证号校验未通过';
+        derived2.style.color = '#f3b8b8';
+      }
+    });
+
+    document.getElementById('btnCancelEdit').addEventListener('click', () => { location.reload(); });
+    document.getElementById('editForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const fd = Object.fromEntries(new FormData(e.target));
+      if (!/^1[3-9]\d{9}$/.test(fd.phone)) { LisztUtil.toast('请输入正确的 11 位手机号', 'error'); return; }
+      if (!LisztUtil.isValidIdCard(fd.idCard)) { LisztUtil.toast('身份证号格式不正确', 'error'); return; }
+      // 身份证号查重（排除自己）
+      const newHash = LisztUtil.hashIdCard(fd.idCard);
+      const dup = LisztStore.findUser(u => u.idCardHash === newHash && u.id !== me.id);
+      if (dup) { LisztUtil.toast('该身份证号已绑定其他账号', 'error'); return; }
+      // 更新用户
+      const users = LisztStore.getUsers();
+      const idx = users.findIndex(u => u.id === me.id);
+      if (idx >= 0) {
+        const derived = LisztUtil.parseIdCard(fd.idCard);
+        users[idx] = {
+          ...users[idx],
+          name: fd.name.trim(),
+          gender: fd.gender,
+          birth: derived.birth,
+          age: derived.age,
+          idCard: fd.idCard.toUpperCase(),
+          idCardHash: newHash,
+          avatarUrl: window.__pendingEditAvatar || users[idx].avatarUrl,
+          group: fd.group,
+          phone: fd.phone.trim(),
+          email: fd.email,
+          school: fd.school,
+          teacher: fd.teacher
+        };
+        LisztStore.setUsers(users);
+        LisztStore.logRegEdit(me.id, { name: fd.name, idCard: '***', group: fd.group, phone: fd.phone });
+        LisztUtil.toast('报名信息已更新', 'success');
+        setTimeout(() => location.reload(), 600);
+      }
+    });
+  }
+
+  // =============== 导出 ===============
+  function exportReg() {
+    const major = MAJORS.find(m => m.key === me.major) || { label: '—' };
+    const rows = [
+      ['李斯特国际青少年钢琴大赛 · 报名表'],
+      [''],
+      ['姓名', me.name],
+      ['账号', me.username],
+      ['年龄', me.age || '—'],
+      ['参赛专业', major.label],
+      ['参赛组别', me.group],
+      ['手机号', me.phone || '—'],
+      ['邮箱', me.email || '—'],
+      ['学校', me.school || '—'],
+      ['指导教师', me.teacher || '—'],
+      [''],
+      ['报名费', me.feePaid ? `已缴（￥${me.feeAmount}）` : `未缴（￥${FEE}）`],
+      [''],
+      ['参赛作品', myVideo ? myVideo.title : '未上传'],
+      myVideo ? ['作曲家', myVideo.composer || '—'] : null,
+      myVideo ? ['作品时长', LisztUtil.formatDuration(myVideo.duration || 0)] : null,
+      myVideo ? ['上传时间', LisztUtil.formatDate(myVideo.uploadedAt)] : null,
+      [''],
+      ['导出时间', LisztUtil.formatDate(new Date().toISOString())]
+    ].filter(Boolean);
+    const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `报名表_${me.username}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    LisztUtil.toast('报名表已下载', 'success');
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>

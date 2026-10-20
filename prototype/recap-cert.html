@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>电子获奖证书 · 赛后回顾</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .award-card {
+      background: linear-gradient(180deg, rgba(28,24,18,.85), rgba(20,17,13,.85));
+      border: 1px solid var(--color-border);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    }
+    .award-icon {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.4rem; flex-shrink: 0;
+    }
+    .award-icon.gold { background: linear-gradient(135deg, #f6e7c4, #c8a45c); color: #1a140d; box-shadow: 0 0 24px rgba(200,164,92,.5); }
+    .award-icon.silver { background: linear-gradient(135deg, #d8d8d8, #8a8a8a); color: #1a140d; }
+    .award-icon.bronze { background: linear-gradient(135deg, #d1894f, #8a5424); color: #fff; }
+    .award-icon.honor { background: rgba(91,158,209,.2); border: 2px solid #84b9e0; color: #84b9e0; }
+    .award-info { flex: 1; min-width: 220px; }
+    .award-info h3 { font-family: var(--font-serif); font-size: 1.3rem; margin: 0 0 4px; color: var(--color-text); }
+    .award-info .meta { color: var(--color-text-dim); font-size: .88rem; margin-bottom: 6px; }
+    .award-info .desc { color: var(--color-text-2); font-size: .92rem; line-height: 1.5; }
+    .award-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* 证书本体（与 finals-cert 共用 .cert-card 样式，但内容不同） */
+    .award-cert {
+      width: 100%;
+      max-width: 880px;
+      margin: 0 auto;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(200,164,92,.22), transparent 60%),
+        linear-gradient(180deg, #1f1810 0%, #110a05 100%);
+      border: 3px solid rgba(200,164,92,.6);
+      border-radius: 18px;
+      padding: 48px 40px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,.6), inset 0 0 0 1px rgba(200,164,92,.2);
+      text-align: center;
+    }
+    .award-cert::before, .award-cert::after {
+      content: ''; position: absolute;
+      width: 80px; height: 80px;
+      border: 2px solid rgba(200,164,92,.5);
+    }
+    .award-cert::before { top: 24px; left: 24px; border-right: 0; border-bottom: 0; }
+    .award-cert::after  { bottom: 24px; right: 24px; border-left: 0; border-top: 0; }
+    .award-cert .eyebrow { color: var(--color-gold-2); letter-spacing: .2em; text-transform: uppercase; font-size: .82rem; font-weight: 600; }
+    .award-cert .title {
+      font-family: var(--font-serif);
+      font-size: 3rem;
+      margin: 14px 0 8px;
+      background: linear-gradient(180deg, #f6e7c4, #c8a45c);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .award-cert .sub { color: var(--color-text-2); font-size: 1rem; margin-bottom: 30px; }
+    .award-cert .recipient { color: var(--color-text-2); font-size: 1rem; margin-bottom: 6px; }
+    .award-cert .recname { font-family: var(--font-serif); font-size: 2.4rem; color: #f6e7c4; margin-bottom: 16px; }
+    .award-cert .recwork { color: var(--color-text-2); font-size: 1rem; font-style: italic; margin-bottom: 24px; }
+    .award-cert .awrank {
+      display: inline-block; padding: 8px 24px; border-radius: 999px;
+      background: linear-gradient(135deg, #f6e7c4, #c8a45c);
+      color: #1a140d; font-family: var(--font-serif); font-weight: 700;
+      font-size: 1.2rem; margin-bottom: 24px;
+    }
+    .award-cert .stats-row { display: flex; justify-content: center; gap: 30px; margin: 24px 0; }
+    .award-cert .stat { text-align: center; }
+    .award-cert .stat .v { font-family: var(--font-serif); font-size: 1.6rem; color: var(--color-gold-2); font-weight: 600; }
+    .award-cert .stat .l { font-size: .82rem; color: var(--color-text-dim); }
+    .award-cert .cert-no {
+      font-family: ui-monospace, monospace;
+      color: var(--color-gold-2); font-size: .95rem;
+      letter-spacing: .04em; margin-top: 18px;
+    }
+    .award-cert .stamp {
+      position: absolute; bottom: 60px; right: 50px;
+      width: 110px; height: 110px;
+      border: 3px solid rgba(199,85,85,.6);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(199,85,85,.7);
+      font-family: var(--font-serif); font-size: .8rem; text-align: center;
+      transform: rotate(-12deg);
+    }
+    .award-cert .stamp .ss { font-size: 1.6rem; font-weight: 600; }
+    .award-cert .stamp .sn { font-size: .6rem; opacity: .8; margin-top: 2px; }
+  </style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="brand-logo">L</span><span>Liszt IPC<small>李斯特国际青少年钢琴大赛</small></span></a>
+    <nav class="nav-links"></nav>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions"></div>
+  </div>
+</header>
+
+<section class="page-hero" style="padding: 60px 24px 30px;">
+  <div class="page-hero-inner">
+    <span class="eyebrow">★ E-CERTIFICATE · AWARD ★</span>
+    <h1>电子获奖证书</h1>
+    <p class="sub">恭喜您获得本届李斯特国际青少年钢琴大赛的奖项！点击下方按钮下载属于您的电子证书。</p>
+  </div>
+</section>
+
+<main class="round-shell" style="padding-top: 24px;">
+
+  <!-- 获奖列表 -->
+  <div id="awardList"></div>
+
+  <!-- 单个证书本体（默认展示综合冠军） -->
+  <div id="certStage"></div>
+
+  <div class="cert-actions">
+    <button class="btn btn-primary" id="btnDownload">⬇ 下载证书（PNG）</button>
+    <a class="btn btn-ghost" href="recap-results.html">查看成绩</a>
+    <a class="btn btn-ghost" href="recap.html">返回赛后回顾</a>
+  </div>
+</main>
+
+<!-- 隐藏 Canvas -->
+<canvas id="certCanvas" style="display:none;" width="1280" height="900"></canvas>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+  const me = LisztAuth.current;
+  if (!me) { location.href = 'login.html?next=recap-cert.html'; return; }
+  if (me.role !== 'contestant') { LisztUtil.toast('仅选手可查看证书', 'error'); setTimeout(() => location.href = 'recap.html', 1000); return; }
+
+  // 收集本选手的获奖
+  const myReg = LisztStore.myFinalReg(me.id);
+  const myFinalScores = myReg ? LisztStore.scoresForFinalReg(myReg.id) : [];
+  const myFinalAvg = myFinalScores.length ? myFinalScores.reduce((a, b) => a + b.overall, 0) / myFinalScores.length : 0;
+
+  // 演示规则：根据最终平均分颁发奖项
+  const awards = [];
+  if (myReg && myFinalScores.length > 0) {
+    if (myFinalAvg >= 9.4) {
+      awards.push({ rank: '总冠军', icon: 'gold',   cls: 'gold',   desc: '全场唯一 · 总分第一' });
+    } else if (myFinalAvg >= 9.2) {
+      awards.push({ rank: '冠军', icon: 'gold',   cls: 'gold',   desc: '所在组别 · 最高分' });
+    } else if (myFinalAvg >= 9.0) {
+      awards.push({ rank: '亚军', icon: 'silver', cls: 'silver', desc: '所在组别 · 第二高分' });
+    } else if (myFinalAvg >= 8.8) {
+      awards.push({ rank: '季军', icon: 'bronze', cls: 'bronze', desc: '所在组别 · 第三高分' });
+    } else if (myFinalAvg >= LisztData.PROMOTION_SCORE) {
+      awards.push({ rank: '优秀奖', icon: 'honor', cls: 'honor', desc: '恭喜完成本届决赛' });
+    }
+  } else if (myReg) {
+    awards.push({ rank: '参赛证明', icon: 'honor', cls: 'honor', desc: '恭喜完成本届决赛（现场评分进行中）' });
+  }
+
+  // 渲染列表
+  const awardList = document.getElementById('awardList');
+  if (awards.length === 0) {
+    awardList.innerHTML = `<div class="alert alert-info">本届决赛您未获得证书。可前往 <a href="finals-cert.html" style="color: var(--color-gold-2);">查看电子参赛证</a>。</div>`;
+    document.getElementById('certStage').innerHTML = '';
+    document.getElementById('btnDownload').style.display = 'none';
+    return;
+  }
+
+  const award = awards[0]; // 取第一项作为主证书
+  const iconMap = { gold: '🏆', silver: '🥈', bronze: '🥉', honor: '🎖️' };
+  awardList.innerHTML = awards.map(a => `
+    <div class="award-card">
+      <div class="award-icon ${a.cls}">${iconMap[a.cls]}</div>
+      <div class="award-info">
+        <h3>${LisztUtil.escape(a.rank)}</h3>
+        <div class="meta">第 12 届李斯特国际青少年钢琴大赛·全国总决赛</div>
+        <div class="desc">${LisztUtil.escape(a.desc)}</div>
+      </div>
+      <div class="award-actions">
+        <button class="btn btn-primary btn-sm" data-award="${LisztUtil.escape(a.rank)}">下载证书</button>
+      </div>
+    </div>
+  `).join('');
+
+  // 证书本体
+  document.getElementById('certStage').innerHTML = `
+    <div class="award-cert" id="certCard">
+      <div class="eyebrow">LISZT INTERNATIONAL PIANO COMPETITION</div>
+      <div class="title">获 奖 证 书</div>
+      <div class="sub">CERTIFICATE OF AWARD · FINALS</div>
+      <div class="recipient">兹证明</div>
+      <div class="recname">${LisztUtil.escape(me.name || '—')}</div>
+      <div class="recwork">凭借作品《${LisztUtil.escape((myReg && myReg.works[0]) ? myReg.works[0].title : '—')}》</div>
+      <div class="awrank">${LisztUtil.escape(award.rank)}</div>
+      <div class="recipient" style="margin-top: 18px;">在第 12 届李斯特国际青少年钢琴大赛·全国总决赛中表现优异，特此颁发证书。</div>
+      <div class="stats-row">
+        <div class="stat"><div class="v">★ ${myFinalAvg ? myFinalAvg.toFixed(2) : '—'}</div><div class="l">综合均分</div></div>
+        <div class="stat"><div class="v">${myFinalScores.length}</div><div class="l">评委人数</div></div>
+        <div class="stat"><div class="v">${LisztUtil.escape(me.group || '—')}</div><div class="l">组别</div></div>
+      </div>
+      <div class="cert-no">证书编号 ${(myReg ? myReg.certNo : 'LISZT-FN-2026-0000').replace('LISZT-FN', 'LISZT-AW')}</div>
+      <div class="stamp">
+        <div>
+          <div class="ss">★</div>
+          <div>李斯特 IPC</div>
+          <div class="sn">FINALS</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 下载
+  document.getElementById('btnDownload').addEventListener('click', downloadCert);
+  document.querySelectorAll('[data-award]').forEach(btn => {
+    btn.addEventListener('click', downloadCert);
+  });
+
+  function downloadCert() {
+    drawCertToCanvas().then(() => {
+      const canvas = document.getElementById('certCanvas');
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      const certNo = (myReg ? myReg.certNo : 'LISZT-FN-2026-0000').replace('LISZT-FN', 'LISZT-AW');
+      a.href = url;
+      a.download = `${award.rank}证书-${me.name}-${certNo}.png`;
+      a.click();
+      LisztUtil.toast('证书已下载', 'success');
+    }).catch(err => {
+      console.error(err);
+      LisztUtil.toast('生成失败：' + err.message, 'error');
+    });
+  }
+
+  // ============ Canvas 绘制获奖证书 ============
+  function drawCertToCanvas() {
+    return new Promise((resolve, reject) => {
+      const canvas = document.getElementById('certCanvas');
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      // 背景
+      const bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, '#1f1810');
+      bg.addColorStop(1, '#0e0a07');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+      // 顶部光晕
+      const rad = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, 500);
+      rad.addColorStop(0, 'rgba(200,164,92,.32)');
+      rad.addColorStop(1, 'rgba(200,164,92,0)');
+      ctx.fillStyle = rad;
+      ctx.fillRect(0, 0, W, 320);
+      // 边框
+      ctx.strokeStyle = 'rgba(200,164,92,.65)';
+      ctx.lineWidth = 5;
+      ctx.strokeRect(28, 28, W - 56, H - 56);
+      ctx.strokeStyle = 'rgba(200,164,92,.2)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(48, 48, W - 96, H - 96);
+      // 四角装饰
+      function drawCorner(x, y, dirs) {
+        ctx.strokeStyle = 'rgba(200,164,92,.6)';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        if (dirs.includes('right')) { ctx.moveTo(x, y); ctx.lineTo(x + 80, y); }
+        if (dirs.includes('left'))  { ctx.moveTo(x, y); ctx.lineTo(x - 80, y); }
+        if (dirs.includes('down'))  { ctx.moveTo(x, y); ctx.lineTo(x, y + 80); }
+        if (dirs.includes('up'))    { ctx.moveTo(x, y); ctx.lineTo(x, y - 80); }
+        ctx.stroke();
+      }
+      drawCorner(60, 60, ['right', 'down']);
+      drawCorner(W - 60, 60, ['left', 'down']);
+      drawCorner(60, H - 60, ['right', 'up']);
+      drawCorner(W - 60, H - 60, ['left', 'up']);
+
+      // 标题
+      ctx.fillStyle = '#c8a45c';
+      ctx.textAlign = 'center';
+      ctx.font = '600 24px "Inter", sans-serif';
+      ctx.fillText('LISZT INTERNATIONAL PIANO COMPETITION', W / 2, 130);
+      // 获奖证书主标题（金色描边渐变）
+      const titleGrad = ctx.createLinearGradient(0, 200, 0, 280);
+      titleGrad.addColorStop(0, '#f6e7c4');
+      titleGrad.addColorStop(1, '#c8a45c');
+      ctx.fillStyle = titleGrad;
+      ctx.font = '700 80px "Playfair Display", "Times New Roman", serif';
+      ctx.fillText('获 奖 证 书', W / 2, 240);
+      ctx.fillStyle = '#a89880';
+      ctx.font = '400 20px "Inter", sans-serif';
+      ctx.fillText('CERTIFICATE OF AWARD · FINALS', W / 2, 280);
+      // 分隔线
+      ctx.strokeStyle = 'rgba(200,164,92,.4)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(180, 320);
+      ctx.lineTo(W - 180, 320);
+      ctx.stroke();
+
+      // 兹证明
+      ctx.fillStyle = '#a89880';
+      ctx.font = '400 22px "Inter", sans-serif';
+      ctx.fillText('兹 证 明', W / 2, 400);
+      // 姓名
+      ctx.fillStyle = '#f6e7c4';
+      ctx.font = '700 64px "Playfair Display", serif';
+      ctx.fillText(me.name || '—', W / 2, 480);
+      // 作品
+      ctx.fillStyle = '#e6dcc8';
+      ctx.font = 'italic 22px "Playfair Display", serif';
+      const workName = (myReg && myReg.works[0]) ? myReg.works[0].title : '—';
+      ctx.fillText(`凭借作品《${workName}》`, W / 2, 540);
+      // 奖项
+      const rankW = ctx.measureText(award.rank).width;
+      const rankX = (W - rankW) / 2 - 30;
+      const rankY = 590;
+      const rankH = 60;
+      const rankGrad = ctx.createLinearGradient(rankX, rankY, rankX + rankW + 60, rankY);
+      rankGrad.addColorStop(0, '#f6e7c4');
+      rankGrad.addColorStop(1, '#c8a45c');
+      ctx.fillStyle = rankGrad;
+      roundRect(ctx, rankX, rankY, rankW + 60, rankH, 30);
+      ctx.fill();
+      ctx.fillStyle = '#1a140d';
+      ctx.font = '700 28px "Playfair Display", serif';
+      ctx.fillText(award.rank, W / 2, rankY + 38);
+
+      // 描述
+      ctx.fillStyle = '#a89880';
+      ctx.font = '400 20px "Inter", sans-serif';
+      ctx.fillText('在第 12 届李斯特国际青少年钢琴大赛·全国总决赛中表现优异，特此颁发证书。', W / 2, 700);
+
+      // 三栏数据
+      const cy = 770;
+      const items = [
+        { v: '★ ' + (myFinalAvg ? myFinalAvg.toFixed(2) : '—'), l: '综合均分' },
+        { v: myFinalScores.length, l: '评委人数' },
+        { v: me.group || '—', l: '组别' }
+      ];
+      const colW = 200;
+      const startX = (W - colW * items.length) / 2;
+      items.forEach((it, i) => {
+        const cx = startX + colW * i + colW / 2;
+        ctx.fillStyle = '#c8a45c';
+        ctx.font = '700 36px "Playfair Display", serif';
+        ctx.fillText(String(it.v), cx, cy);
+        ctx.fillStyle = '#a89880';
+        ctx.font = '400 16px "Inter", sans-serif';
+        ctx.fillText(it.l, cx, cy + 30);
+      });
+
+      // 证书编号
+      const certNo = (myReg ? myReg.certNo : 'LISZT-FN-2026-0000').replace('LISZT-FN', 'LISZT-AW');
+      ctx.fillStyle = '#c8a45c';
+      ctx.font = '500 16px "Inter", monospace';
+      ctx.fillText('证书编号  ' + certNo, W / 2, 850);
+
+      // 印章
+      const sx = W - 200, sy = H - 180;
+      ctx.save();
+      ctx.translate(sx, sy);
+      ctx.rotate(-0.21);
+      ctx.strokeStyle = 'rgba(199,85,85,.65)';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(0, 0, 80, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, 0, 65, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(199,85,85,.7)';
+      ctx.font = '700 30px "Playfair Display", serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('★', 0, -22);
+      ctx.font = '600 18px "Playfair Display", serif';
+      ctx.fillText('LISZT', 0, 14);
+      ctx.font = '400 11px "Inter", sans-serif';
+      ctx.fillText('FINALS', 0, 36);
+      ctx.restore();
+
+      resolve();
+    });
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的成绩 · 李斯特国际青少年钢琴大赛</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .result-shell {
+      max-width: 1240px; margin: 0 auto; padding: 32px 28px 80px;
+    }
+    .result-hero {
+      background: linear-gradient(135deg, rgba(200,164,92,.12), rgba(20,17,13,.4));
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .result-hero h1 {
+      margin: 0 0 6px;
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+    }
+    .result-hero .sub { color: var(--color-text-dim); font-size: .92rem; }
+    .result-hero .stats {
+      display: flex; gap: 18px; margin-top: 14px; flex-wrap: wrap;
+    }
+    .result-hero .stat {
+      background: rgba(12,10,8,.5);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 10px 16px;
+      min-width: 110px;
+      text-align: center;
+    }
+    .result-hero .stat .num {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      color: var(--color-gold-2);
+      font-weight: 700;
+      line-height: 1;
+    }
+    .result-hero .stat .lbl {
+      font-size: .72rem; color: var(--color-text-dim);
+      letter-spacing: .06em; text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .video-stack { display: grid; grid-template-columns: 280px 1fr; gap: 22px; }
+    @media (max-width: 880px) { .video-stack { grid-template-columns: 1fr; } }
+
+    .video-list-card {
+      background: rgba(20,17,13,.6);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 16px;
+      align-self: start;
+    }
+    .video-list-card h3 {
+      margin: 0 0 12px;
+      font-size: .9rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--color-text-dim);
+    }
+    .video-list-item {
+      display: flex; gap: 10px; align-items: center;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background .15s ease;
+      margin-bottom: 6px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .video-list-item:hover { background: rgba(200,164,92,.06); }
+    .video-list-item.active { background: rgba(200,164,92,.14); border: 1px solid var(--color-gold); padding: 9px 11px; }
+    .video-list-item .mini-thumb {
+      width: 56px; height: 36px; background: linear-gradient(135deg, #2a241c, #1a1410);
+      border-radius: 4px; display: grid; place-items: center;
+      color: var(--color-gold-2); flex-shrink: 0;
+      font-size: .9rem;
+    }
+    .video-list-item .meta { flex: 1; min-width: 0; }
+    .video-list-item .meta .t {
+      font-size: .9rem; color: var(--color-text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .video-list-item .meta .s {
+      font-size: .75rem; color: var(--color-text-dim);
+      display: flex; gap: 6px; align-items: center; margin-top: 2px;
+    }
+
+    .video-detail-card {
+      background: rgba(20,17,13,.6);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 26px 28px;
+    }
+    .video-detail-card h2 {
+      font-family: var(--font-serif);
+      margin: 0 0 6px;
+      color: var(--color-text);
+    }
+    .video-detail-card .meta-line {
+      color: var(--color-text-dim); font-size: .88rem;
+      margin-bottom: 16px;
+    }
+    .video-frame {
+      aspect-ratio: 16/9; background: #000;
+      border-radius: var(--radius-sm); overflow: hidden;
+      display: grid; place-items: center;
+      color: var(--color-text-dim);
+    }
+    .score-summary-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px; margin: 18px 0 8px;
+    }
+    .score-summary-row .box {
+      background: rgba(12,10,8,.5);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      text-align: center;
+    }
+    .score-summary-row .box .n {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      color: var(--color-gold-2);
+      font-weight: 700;
+      line-height: 1;
+    }
+    .score-summary-row .box .l {
+      font-size: .7rem;
+      color: var(--color-text-dim);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .judge-row {
+      display: flex; gap: 14px; align-items: center;
+      padding: 14px 16px;
+      background: rgba(12,10,8,.4);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+    }
+    .judge-row .avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      display: grid; place-items: center;
+      color: #1a1410; font-weight: 700; font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .judge-row .body { flex: 1; min-width: 0; }
+    .judge-row .body .nm {
+      color: var(--color-text);
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+    }
+    .judge-row .body .when {
+      color: var(--color-text-dim);
+      font-size: .8rem;
+      margin-top: 2px;
+    }
+    .judge-row .ov {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      color: var(--color-gold-2);
+      font-weight: 700;
+    }
+
+    .dim-table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    .dim-table td { padding: 8px 4px; font-size: .9rem; }
+    .dim-table td:first-child { color: var(--color-text-2); }
+    .dim-table td:nth-child(2) { text-align: right; color: var(--color-gold-2); font-weight: 600; width: 60px; }
+
+    .empty {
+      text-align: center; padding: 60px 20px;
+      color: var(--color-text-dim);
+    }
+    .empty .icon { font-size: 3rem; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-logo">L</span>
+      <span>Liszt IPC<small>我的成绩</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="result.html" class="active">我的成绩</a>
+      <a href="upload.html">上传作品</a>
+      <a href="dashboard.html">完整工作台</a>
+    </nav>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions"></div>
+  </div>
+</header>
+
+<main class="result-shell">
+
+  <div class="result-hero">
+    <div>
+      <span class="eyebrow-line">My Results</span>
+      <h1 id="heroTitle">我的成绩</h1>
+      <div class="sub" id="heroSub">评委对您作品所给出的打分与文字评语</div>
+      <div class="stats" id="heroStats"></div>
+    </div>
+    <div style="text-align: right; display:flex; flex-direction:column; gap:8px; align-items:flex-end;" id="heroActions">
+      <a href="upload.html" class="btn btn-primary">📤 上传作品</a>
+    </div>
+  </div>
+
+  <div id="resultContent"></div>
+</main>
+
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modalInner"></div></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script src="js/result.js"></script>
+</body>
+</html>

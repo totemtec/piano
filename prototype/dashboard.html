@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>选手中心 · 李斯特国际青少年钢琴大赛</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-logo">L</span>
+      <span>Liszt IPC<small>李斯特国际青少年钢琴大赛</small></span>
+    </a>
+    <nav class="nav-links"></nav>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions"></div>
+  </div>
+</header>
+
+<main class="dashboard">
+
+  <!-- 侧边栏 -->
+  <aside class="sidebar">
+    <div class="me">
+      <div class="avatar-lg" id="meAvatar">选</div>
+      <h4 id="meName">选手</h4>
+      <div class="role">选 手</div>
+    </div>
+    <nav>
+      <button data-panel="scores"    class="active">🏆 我的成绩</button>
+      <button data-panel="overview">📊 总览</button>
+      <button data-panel="upload">📤 上传作品</button>
+      <button data-panel="myvideos">🎬 我的视频</button>
+      <button data-panel="demos">🎓 评委示范</button>
+      <button data-panel="profile">👤 个人资料</button>
+    </nav>
+  </aside>
+
+  <!-- 主体 -->
+  <section class="dashboard-main">
+
+    <!-- 总览 -->
+    <div class="panel" id="panel-overview">
+      <div class="panel-head"><h2>欢迎回来，<span id="welcomeName">选手</span></h2></div>
+      <div class="stat-grid" id="overviewStats"></div>
+
+      <h3 style="margin-top: 36px;">最近评分</h3>
+      <div id="recentScores"></div>
+    </div>
+
+    <!-- 上传作品 -->
+    <div class="panel" id="panel-upload">
+      <div class="panel-head"><h2>上传比赛视频</h2></div>
+
+      <div class="card">
+        <div class="dropzone" id="dropzone">
+          <div class="icon">⬆</div>
+          <p style="font-size: 1.05rem; color: var(--color-text);">点击或拖拽视频文件至此处上传</p>
+          <p class="hint">支持 MP4 / MOV / WebM · 单个文件不超过 500MB</p>
+          <input type="file" id="fileInput" accept="video/*">
+        </div>
+        <div id="uploadStatus" style="display:none; margin-top: 16px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
+            <span id="uploadFileName">文件</span>
+            <span id="uploadProgress">0%</span>
+          </div>
+          <div class="upload-progress"><div id="uploadBar"></div></div>
+        </div>
+
+        <form id="uploadForm" style="margin-top: 24px;">
+          <div class="field">
+            <label>作品名称 *</label>
+            <input type="text" name="title" required placeholder="例如：肖邦 降 b 小调第二谐谑曲 Op.31">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>作曲家</label>
+              <input type="text" name="composer" placeholder="例如：Frédéric Chopin">
+            </div>
+            <div class="field">
+              <label>参赛组别</label>
+              <select name="group" required>
+                <option value="">请选择</option>
+                <option>儿童组</option>
+                <option>少年组</option>
+                <option>青年组</option>
+                <option>专业组</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>作品简介 / 演奏笔记</label>
+            <textarea name="notes" placeholder="可填写曲目背景、演奏心得等..."></textarea>
+          </div>
+          <button class="btn btn-primary" type="submit">提交参赛作品</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 我的视频 -->
+    <div class="panel" id="panel-myvideos">
+      <div class="panel-head">
+        <h2>我的上传</h2>
+        <button class="btn btn-primary btn-sm" data-go="upload">+ 上传新作品</button>
+      </div>
+      <div class="video-grid" id="myVideosGrid"></div>
+    </div>
+
+    <!-- 我的成绩 -->
+    <div class="panel active" id="panel-scores">
+      <div class="panel-head">
+        <div>
+          <h2 style="margin-bottom: 4px;">成绩与评委评语</h2>
+          <p class="muted" style="margin: 0;">以下展示您所有作品收到的评委打分与文字评语。</p>
+        </div>
+        <div id="scoresSummary"></div>
+      </div>
+      <div id="scoresList"></div>
+    </div>
+
+    <!-- 评委示范 -->
+    <div class="panel" id="panel-demos">
+      <div class="panel-head"><h2>评委示范视频</h2></div>
+      <p class="muted" style="margin-bottom: 18px;">评委上传的示范视频与演奏指导视频。</p>
+      <div class="video-grid" id="demosGrid"></div>
+    </div>
+
+    <!-- 个人资料 -->
+    <div class="panel" id="panel-profile">
+      <div class="panel-head"><h2>个人资料</h2></div>
+      <div id="feeStatus" class="fee-banner" style="margin-bottom: 18px;"></div>
+      <div class="card">
+        <form id="profileForm">
+          <div class="field-row">
+            <div class="field">
+              <label>真实姓名</label>
+              <input type="text" name="name" required>
+            </div>
+            <div class="field">
+              <label>账号</label>
+              <input type="text" name="username" disabled>
+              <div class="field-hint">账号一旦注册不可修改</div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>参赛组别</label>
+              <select name="group">
+                <option>儿童组</option>
+                <option>少年组</option>
+                <option>青年组</option>
+                <option>专业组</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>年龄</label>
+              <input type="number" name="age" min="6" max="22">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>所在学校</label>
+              <input type="text" name="school">
+            </div>
+            <div class="field">
+              <label>指导教师</label>
+              <input type="text" name="teacher">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>邮箱</label>
+              <input type="email" name="email">
+            </div>
+            <div class="field">
+              <label>联系电话</label>
+              <input type="text" name="phone">
+            </div>
+          </div>
+          <div class="field">
+            <label>个人简介</label>
+            <textarea name="bio"></textarea>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <button class="btn btn-primary" type="submit">保存修改</button>
+            <button class="btn btn-ghost" type="button" id="changePwdBtn">修改密码</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modalInner"></div></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

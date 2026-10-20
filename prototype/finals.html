@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全国总决赛 · 李斯特国际青少年钢琴大赛</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .finals-cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+  </style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-logo">L</span>
+      <span>Liszt IPC<small>李斯特国际青少年钢琴大赛</small></span>
+    </a>
+    <nav class="nav-links"></nav>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions"></div>
+  </div>
+</header>
+
+<!-- 决赛 Hero -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <span class="eyebrow">★ LISZT FINALS · 2026 ★</span>
+    <h1 id="finalsTitle">全国总决赛</h1>
+    <p class="sub" id="finalsSub">线下现场演奏 · 国际名家评委 · 颁奖音乐会</p>
+    <div class="hero-meta" id="finalsMeta">
+      <!-- 动态填充 -->
+    </div>
+    <div class="finals-cta-row" id="finalsCta">
+      <!-- 动态填充：根据登录状态 / 是否已晋级 -->
+    </div>
+  </div>
+</section>
+
+<main class="round-shell">
+
+  <!-- 关键信息 4 卡 -->
+  <section class="round-section">
+    <span class="eyebrow">KEY INFORMATION</span>
+    <h2><span class="ic">📍</span> 比赛信息一览</h2>
+    <div class="final-info-grid" id="finalInfoGrid"></div>
+  </section>
+
+  <!-- 决赛日程 -->
+  <section class="round-section" id="scheduleSection">
+    <span class="eyebrow">SCHEDULE</span>
+    <h2><span class="ic">📅</span> 决赛日程</h2>
+    <p class="desc">5 天精彩赛程：报到 → 开幕 → 现场演奏 → 颁奖音乐会。</p>
+    <div class="final-schedule" id="finalSchedule"></div>
+  </section>
+
+  <!-- 评委会阵容 -->
+  <section class="round-section">
+    <span class="eyebrow">JURY · INTERNATIONAL</span>
+    <h2><span class="ic">🎼</span> 决赛评委会</h2>
+    <p class="desc">由 6 位中外钢琴家、教育家组成权威评委会，全程参与现场打分与大师班指导。</p>
+    <div class="final-judges" id="finalJudges"></div>
+  </section>
+
+  <!-- 奖项设置 -->
+  <section class="round-section">
+    <span class="eyebrow">PRIZES</span>
+    <h2><span class="ic">🏆</span> 奖项设置</h2>
+    <p class="desc">总奖池 35 万元人民币，含大师班名额与签约演出机会。</p>
+    <div class="prize-grid" id="prizeGrid"></div>
+  </section>
+
+  <!-- 报名入口（自动判断是否可报名）-->
+  <section class="round-section">
+    <div class="final-cta" id="finalCtaBlock">
+      <h2 id="ctaTitle">全国总决赛报名</h2>
+      <p id="ctaDesc">已通过初赛的选手可在下方完成决赛报名。</p>
+      <div class="finals-cta-row" id="ctaButtons"></div>
+    </div>
+  </section>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+  const F = LisztData.FINAL_COMPETITION;
+
+  // Hero
+  document.getElementById('finalsTitle').textContent = F.edition;
+  document.getElementById('finalsSub').textContent = F.tagline;
+  document.getElementById('finalsMeta').innerHTML = `
+    <span class="pill">📅 ${F.dateLabel}</span>
+    <span class="pill">📍 ${F.city} · ${F.venue}</span>
+    <span class="pill">💰 报名费 ￥${F.feeAmount}</span>
+  `;
+
+  // 4 卡信息
+  document.getElementById('finalInfoGrid').innerHTML = `
+    <div class="info-tile"><div class="lb">赛事届数</div><div class="vl gold">${F.edition}</div></div>
+    <div class="info-tile"><div class="lb">比赛日期</div><div class="vl">${F.dateLabel}</div></div>
+    <div class="info-tile"><div class="lb">比赛城市</div><div class="vl">${F.city}</div></div>
+    <div class="info-tile"><div class="lb">比赛场馆</div><div class="vl">${F.venue}</div></div>
+  `;
+
+  // 日程
+  document.getElementById('finalSchedule').innerHTML = F.schedule.map(s => `
+    <div class="fs-item">
+      <div class="dt">${s.date}</div>
+      <div class="ev">${LisztUtil.escape(s.event)}</div>
+    </div>
+  `).join('');
+
+  // 评委
+  document.getElementById('finalJudges').innerHTML = LisztData.FINAL_JUDGES.map(j => `
+    <div class="fj-card">
+      <div class="fj-avatar" style="background:${j.avatarColor || 'linear-gradient(135deg, #c8a45c, #8a6a2c)'}">${LisztUtil.escape(j.initial || j.name.slice(0,1))}</div>
+      <div class="fj-name">${LisztUtil.escape(j.name)}</div>
+      <div class="fj-title">${LisztUtil.escape(j.title)}</div>
+      <div class="fj-bio">${LisztUtil.escape(j.bio)}</div>
+      <div class="fj-tags">
+        <span class="fj-tag">${j.years} 年执评</span>
+        ${(j.expertise || []).slice(0,2).map(e => `<span class="fj-tag">${LisztUtil.escape(e)}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  // 奖项
+  document.getElementById('prizeGrid').innerHTML = F.prizes.map(p => `
+    <div class="prize-card ${p.rank.includes('冠军') || p.rank.includes('总') ? 'champion' : ''}">
+      <div class="prize-rank">${LisztUtil.escape(p.rank)}</div>
+      <div class="prize-amount">${LisztUtil.escape(p.amount)}</div>
+      <div class="prize-per">${LisztUtil.escape(p.perGroup)}</div>
+    </div>
+  `).join('');
+
+  // 报名入口逻辑
+  const me = LisztAuth.current;
+  const myReg = me && me.role === 'contestant' ? LisztStore.myFinalReg(me.id) : null;
+  const passed = me && me.role === 'contestant' ? LisztStore.isPrelimPassed(me.id) : false;
+  const ctaTitle = document.getElementById('ctaTitle');
+  const ctaDesc  = document.getElementById('ctaDesc');
+  const ctaBtns  = document.getElementById('ctaButtons');
+  if (!me) {
+    ctaTitle.textContent = '请先登录参赛账号';
+    ctaDesc.textContent = '决赛报名需先完成初赛海选并通过晋级分数线。';
+    ctaBtns.innerHTML = `
+      <a class="btn btn-primary" href="login.html?next=finals.html">登录账号</a>
+      <a class="btn btn-ghost" href="login.html?tab=register">注册参赛</a>
+      <a class="btn btn-ghost" href="index.html">了解初赛</a>
+    `;
+  } else if (me.role !== 'contestant') {
+    ctaTitle.textContent = '决赛报名仅对选手开放';
+    ctaDesc.textContent = '您当前是评委 / 组委会账号，决赛页仅供查询与评审。';
+    ctaBtns.innerHTML = `<a class="btn btn-primary" href="score.html">前往评审打分</a>`;
+  } else if (myReg) {
+    ctaTitle.textContent = '✓ 您已完成决赛报名';
+    ctaDesc.innerHTML = `参赛证号：<strong style="color: var(--color-gold-2); font-family: ui-monospace, monospace;">${LisztUtil.escape(myReg.certNo)}</strong> · 缴费：${myReg.feePaid ? '<span style="color: #b6e3c8;">已缴</span>' : '<span style="color: #f3b8b8;">未缴</span>'}`;
+    ctaBtns.innerHTML = `
+      <a class="btn btn-primary" href="finals-cert.html">查看电子参赛证</a>
+      ${myReg.feePaid ? '' : '<a class="btn btn-primary" href="finals-payment.html">完成缴费</a>'}
+      <a class="btn btn-ghost" href="recap-results.html">查看成绩</a>
+    `;
+  } else if (!passed) {
+    ctaTitle.textContent = '尚未晋级决赛';
+    ctaDesc.textContent = '请先完成初赛作品提交并通过晋级分数线（综合均分 ≥ 8.0）。';
+    ctaBtns.innerHTML = `
+      <a class="btn btn-primary" href="upload.html">去上传初赛作品</a>
+      <a class="btn btn-ghost" href="result.html">查看初赛成绩</a>
+    `;
+  } else {
+    ctaTitle.textContent = '恭喜晋级！请完成决赛报名';
+    ctaDesc.textContent = '填写 2 个参赛曲目、指导教师与收件地址后，进入缴费环节。';
+    ctaBtns.innerHTML = `<a class="btn btn-primary" href="finals-register.html">立即报名决赛 →</a>`;
+  }
+})();
+</script>
+</body>
+</html>

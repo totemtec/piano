@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>李斯特国际青少年钢琴大赛 · Liszt International Piano Competition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 角色化首页专属样式 */
+    .role-quickbar {
+      background: linear-gradient(180deg, rgba(28,24,18,.95), rgba(20,17,13,.07));
+      padding: 28px 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .role-quickbar-inner {
+      max-width: 1280px; margin: 0 auto; padding: 0 28px;
+      display: flex; align-items: center; gap: 22px; flex-wrap: wrap;
+    }
+    .role-quickbar .avatar-xl {
+      width: 56px; height: 56px; border-radius: 50%;
+      display: grid; place-items: center;
+      color: #1a1410; font-weight: 700; font-size: 1.3rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,.4);
+      flex-shrink: 0;
+    }
+    .role-quickbar .info { flex: 1; min-width: 220px; }
+    .role-quickbar .info h3 {
+      margin: 0 0 4px;
+      color: var(--color-text);
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+    }
+    .role-quickbar .info .sub {
+      color: var(--color-text-dim);
+      font-size: .9rem;
+    }
+    .role-quickbar .stats {
+      display: flex; gap: 18px; flex-wrap: wrap;
+    }
+    .role-quickbar .stat-mini {
+      background: rgba(12,10,8,.5);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 10px 16px;
+      min-width: 96px;
+      text-align: center;
+    }
+    .role-quickbar .stat-mini .num {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-gold-2);
+      line-height: 1;
+    }
+    .role-quickbar .stat-mini .label {
+      font-size: .72rem;
+      color: var(--color-text-dim);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .role-quickbar .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* 选手上传作品内嵌卡片 */
+    .quick-upload {
+      background: linear-gradient(180deg, rgba(28,24,18,.95), rgba(20,17,13,.95));
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+    .quick-upload .row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .quick-upload input, .quick-upload select, .quick-upload textarea {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(12,10,8,.5);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text);
+      font-family: var(--font-sans);
+      font-size: .9rem;
+    }
+    .quick-upload label { display:block; font-size:.82rem; color:var(--color-text-2); margin-bottom: 4px; }
+
+    /* 活动流 */
+    .activity-feed {
+      background: linear-gradient(180deg, rgba(28,24,18,.92), rgba(20,17,13,.92));
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+    }
+    .activity-feed .item {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .activity-feed .item:last-child { border-bottom: 0; }
+    .activity-feed .icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(200,164,92,.12);
+      display: grid; place-items: center;
+      color: var(--color-gold-2);
+      flex-shrink: 0;
+    }
+    .activity-feed .body { flex: 1; }
+    .activity-feed .body .when { font-size: .8rem; color: var(--color-text-dim); }
+
+    /* 流程引导（未登录） */
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .step {
+      background: linear-gradient(180deg, rgba(28,24,18,.92), rgba(20,17,13,.92));
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 24px;
+      position: relative;
+    }
+    .step .num {
+      font-family: var(--font-serif);
+      font-size: 3rem;
+      color: var(--color-gold);
+      opacity: .35;
+      position: absolute;
+      top: 14px; right: 18px;
+      line-height: 1;
+    }
+    .step h4 { margin: 0 0 8px; color: var(--color-text); }
+    .step p { margin: 0; font-size: .9rem; }
+
+    /* demo account pill */
+    .demo-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 4px 10px;
+      background: rgba(12,10,8,.4);
+      border: 1px solid var(--color-border);
+      border-radius: 999px;
+      font-size: .82rem;
+    }
+    .demo-pill .kbd {
+      background: rgba(200,164,92,.15);
+      border: 1px solid var(--color-border);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: ui-monospace, monospace;
+      color: var(--color-gold-2);
+    }
+  </style>
+</head>
+<body>
+
+<!-- 导航 -->
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-logo">L</span>
+      <span>
+        Liszt IPC
+        <small>李斯特国际青少年钢琴大赛</small>
+      </span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html" class="active">首页</a>
+      <a href="judges.html">专家评委</a>
+      <a href="index.html#schedule">赛事日程</a>
+      <a href="index.html#groups">组别设置</a>
+      <a href="index.html#prizes">奖项设置</a>
+      <a href="finals.html" class="nav-finals">🏆 全国决赛</a>
+      <a href="recap.html" class="nav-recap">📰 赛后回顾</a>
+    </nav>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions" id="navActions"></div>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <span class="hero-eyebrow">第 12 届 · 2026 赛季</span>
+    <h1>跨越百年<span class="accent">浪漫</span>，<br>让琴键诉说你的声音</h1>
+    <p class="hero-sub" id="heroSub">
+      李斯特国际青少年钢琴大赛面向全球 6–22 岁青少年钢琴学习者，由 6 位来自中央音乐学院、上海音乐学院、欧洲知名音乐院校的钢琴家与教育家组成权威评委会。
+      2026 赛季设 4 个组别，覆盖启蒙至专业演奏阶段。
+    </p>
+    <div class="hero-actions" id="heroActions">
+      <!-- JS 根据登录角色动态渲染 -->
+    </div>
+
+    <!-- 大型赛事切换条（初赛 / 决赛 / 回顾） -->
+    <div class="round-switcher">
+      <a class="rs-card active" href="index.html">
+        <div class="rs-eyebrow">初赛·海选</div>
+        <div class="rs-title">2026 赛季</div>
+        <div class="rs-sub">线上提交作品 · 海选 80% 晋级</div>
+      </a>
+      <a class="rs-card finals" href="finals.html">
+        <div class="rs-eyebrow">★ 决赛·巅峰</div>
+        <div class="rs-title">上海·贺绿汀音乐厅</div>
+        <div class="rs-sub">线下现场演奏 · 7.20 – 7.24</div>
+      </a>
+      <a class="rs-card recap" href="recap.html">
+        <div class="rs-eyebrow">📰 赛后回顾</div>
+        <div class="rs-title">2026 赛季</div>
+        <div class="rs-sub">新闻·花絮·照片·电子证书</div>
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="num">12+</div><div class="label">届赛事</div></div>
+      <div><div class="num">38</div><div class="label">参赛国家</div></div>
+      <div><div class="num">2600+</div><div class="label">历届选手</div></div>
+      <div><div class="num">¥120K</div><div class="label">年度奖金</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="piano-deco"></div>
+
+<!-- ===== 角色化快速入口区（登录后显示）===== -->
+<section id="roleSection" style="display:none;">
+  <div class="role-quickbar">
+    <div class="role-quickbar-inner">
+      <div class="avatar-xl" id="roleAvatar">选</div>
+      <div class="info">
+        <h3 id="roleGreeting">您好，选手</h3>
+        <div class="sub" id="roleSubLine">已登录 · 选手账号</div>
+      </div>
+      <div class="stats" id="roleStats"></div>
+      <div class="actions" id="roleActions"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 选手专属：上传作品 + 我的作品（登录后）===== -->
+<section id="contestantSection" class="section" style="display:none;">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Contestant Workspace</span>
+      <h2>选手工作台</h2>
+      <p>在此上传比赛视频，并查看您作品收到的评委打分与文字评语。</p>
+    </div>
+
+    <!-- 快速上传 -->
+    <div class="quick-upload" style="margin-bottom: 28px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+        <h3 style="margin:0;">📤 快速上传比赛作品</h3>
+        <a href="result.html" class="btn btn-ghost btn-sm">前往成绩页 →</a>
+      </div>
+      <form id="quickUploadForm">
+        <div class="row">
+          <div>
+            <label>作品名称 *</label>
+            <input type="text" name="title" required placeholder="例如：肖邦 叙事曲 Op.23">
+          </div>
+          <div>
+            <label>作曲家</label>
+            <input type="text" name="composer" placeholder="例如：Chopin">
+          </div>
+          <div>
+            <label>参赛组别 *</label>
+            <select name="group" required>
+              <option value="">请选择组别</option>
+              <option>儿童组</option>
+              <option>少年组</option>
+              <option>青年组</option>
+              <option>专业组</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top: 12px;">
+          <label>作品简介 / 演奏笔记</label>
+          <textarea name="notes" placeholder="可填写曲目背景、演奏心得等..." style="min-height: 70px;"></textarea>
+        </div>
+        <div style="margin-top: 14px;">
+          <label>视频文件 *</label>
+          <div class="dropzone" id="quickDropzone" style="padding: 26px 16px;">
+            <div class="icon" style="width: 40px; height: 40px; font-size: 1.2rem;">⬆</div>
+            <p style="margin: 4px 0;">点击或拖拽视频文件至此处上传</p>
+            <p class="hint">MP4 / MOV / WebM · 单文件 ≤ 500MB</p>
+            <input type="file" id="quickFileInput" accept="video/*">
+          </div>
+          <div id="quickUploadStatus" style="display:none; margin-top: 10px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
+              <span id="quickFileName" style="font-size:.85rem;"></span>
+              <span id="quickProgress" style="font-size:.85rem;">0%</span>
+            </div>
+            <div class="upload-progress"><div id="quickBar"></div></div>
+          </div>
+        </div>
+        <div style="display:flex; gap: 10px; margin-top: 16px; align-items:center; flex-wrap: wrap;">
+          <button class="btn btn-primary" type="submit">提交参赛作品</button>
+          <span class="muted" style="font-size:.85rem;">提交后评委将在评审周期内为您评分</span>
+        </div>
+      </form>
+    </div>
+
+    <!-- 我的最近作品 -->
+    <h3 style="margin-bottom: 16px;">🎬 我的最近作品</h3>
+    <div id="myRecentVideos" class="video-grid"></div>
+
+    <!-- 我的最近评分 -->
+    <h3 style="margin: 32px 0 16px;">🏆 我的最近评分</h3>
+    <div id="myRecentScores"></div>
+  </div>
+</section>
+
+<!-- ===== 评委专属：待评审 + 已完成（登录后）===== -->
+<section id="judgeSection" class="section" style="display:none;">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Judge Console</span>
+      <h2>评委评审台</h2>
+      <p>查看待评审作品，进入 4 维度评分流程。</p>
+      <a href="judge-panel.html" class="btn btn-ghost btn-sm" style="margin-top: 14px;">进入完整评审中心 →</a>
+    </div>
+
+    <h3 style="margin-bottom: 16px;">📋 待评审（前 3 件）</h3>
+    <div id="pendingReviews" class="video-grid"></div>
+
+    <h3 style="margin: 32px 0 16px;">✅ 最近评分</h3>
+    <div id="recentJudged"></div>
+  </div>
+</section>
+
+<!-- ===== 组委会专属：数据总览（登录后）===== -->
+<section id="adminSection" class="section" style="display:none;">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Committee Console</span>
+      <h2>组委会数据台</h2>
+      <p>赛事实时数据总览。</p>
+      <a href="admin.html" class="btn btn-primary btn-sm" style="margin-top: 14px;">进入管理后台 →</a>
+    </div>
+
+    <div class="stat-grid" id="adminOverviewStats"></div>
+
+    <h3 style="margin: 32px 0 16px;">🏆 当前榜单</h3>
+    <table class="data-table" id="adminTopTable"></table>
+  </div>
+</section>
+
+<!-- ===== 未登录：流程引导 ===== -->
+<section id="guestSection" class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">How It Works</span>
+      <h2>4 步完成参赛</h2>
+      <p>从注册账号到收到评委打分，每一个环节都清晰可追溯。</p>
+    </div>
+    <div class="step-grid">
+      <div class="step">
+        <div class="num">01</div>
+        <h4>注册账号</h4>
+        <p>填写个人信息、参赛组别和指导教师，提交后即时开通选手账号。</p>
+      </div>
+      <div class="step">
+        <div class="num">02</div>
+        <h4>上传视频</h4>
+        <p>在「我的作品」中上传高清比赛视频，支持 MP4 / MOV / WebM，最大 500MB。</p>
+      </div>
+      <div class="step">
+        <div class="num">03</div>
+        <h4>评委评审</h4>
+        <p>权威评委对您的作品从 4 个维度独立打分，并留下详细文字评语。</p>
+      </div>
+      <div class="step">
+        <div class="num">04</div>
+        <h4>查看结果</h4>
+        <p>登录后在「我的成绩」中查看所有评委打分、详细评语。</p>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:12px; justify-content:center; margin-top: 36px; flex-wrap: wrap;">
+      <a class="btn btn-primary" href="register.html">立即注册</a>
+      <a class="btn btn-ghost" href="login.html">已有账号 · 登录</a>
+    </div>
+
+    <div style="text-align:center; margin-top: 24px;">
+      <p class="muted" style="font-size: .85rem; margin-bottom: 10px;">演示账号（点击下方直接登录体验）：</p>
+      <div style="display:flex; gap: 12px; justify-content:center; flex-wrap: wrap;">
+        <a class="demo-pill" href="login.html">选手 <span class="kbd">player</span> / <span class="kbd">123456</span></a>
+        <a class="demo-pill" href="login.html?next=review.html">评委 <span class="kbd">judge</span> / <span class="kbd">123456</span></a>
+        <a class="demo-pill" href="login.html?next=admin.html">管理 <span class="kbd">admin</span> / <span class="kbd">admin</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 关于大赛 -->
+<section class="section" style="background: rgba(20,17,13,.4);">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">About the Competition</span>
+      <h2>关于大赛</h2>
+      <p>李斯特国际青少年钢琴大赛创办于 2014 年，以浪漫主义大师弗朗茨·李斯特的艺术精神为指引，致力于发掘并培育新一代钢琴艺术人才。赛事已成为亚洲地区最具影响力的青少年钢琴赛事之一。</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px;">
+      <div class="card">
+        <div class="card-title"><h3>权威评委会</h3></div>
+        <p>由中央音乐学院、上海音乐学院、欧洲知名音乐院校的钢琴家与教育家组成，确保评审的国际化与专业性。</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>全球舞台</h3></div>
+        <p>历届选手来自中国、美国、德国、日本、韩国等 38 个国家与地区，提供面向世界的展示舞台。</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>丰厚奖项</h3></div>
+        <p>年度奖金总额 12 万美元，获奖者将获得奖金、签约演出机会以及大师班推荐。</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>大师课堂</h3></div>
+        <p>晋级选手可参加由评委会主席主持的赛前大师班，并获得一对一作品指导机会。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 评委阵容预览 -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Jury Panel</span>
+      <h2>权威评委阵容</h2>
+      <p>本届大赛由 6 位来自中外顶级音乐院校的钢琴家与教育家组成。</p>
+      <a class="btn btn-ghost" href="judges.html" style="margin-top: 14px;">查看全部评委 →</a>
+    </div>
+    <div class="judge-grid" id="judgePreview"></div>
+  </div>
+</section>
+
+<!-- 赛事日程 -->
+<section class="section" id="schedule" style="background: rgba(20,17,13,.4);">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">2026 Timeline</span>
+      <h2>赛事日程</h2>
+      <p>从线上预选到现场决赛，全流程线上化呈现。</p>
+    </div>
+    <div class="timeline" style="max-width: 720px; margin: 0 auto;">
+      <div class="timeline-item">
+        <div class="time">2026 年 3 月</div>
+        <h4>线上预选报名开启</h4>
+        <p>选手在平台注册账号并填写参赛资料，准备上传比赛视频。</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">2026 年 5 月</div>
+        <h4>预选视频提交截止</h4>
+        <p>选手通过平台上传高清比赛视频，时长与曲目组别要求一致。</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">2026 年 6 月</div>
+        <h4>入围名单公布</h4>
+        <p>评委会对全部预选视频进行评分与反馈，入围选手获得现场复赛资格。</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">2026 年 7 月 15 日</div>
+        <h4>现场复赛 · 杭州</h4>
+        <p>入围选手齐聚杭州大剧院，与国际评委面对面进行现场演奏。</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">2026 年 7 月 20 日</div>
+        <h4>总决赛暨颁奖音乐会</h4>
+        <p>各组别决赛轮 + 评委会颁奖，获奖者将与杭州交响乐团合作演出。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 组别设置 -->
+<section class="section" id="groups">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Groups</span>
+      <h2>组别设置</h2>
+      <p>赛事设 4 个年龄组别，覆盖启蒙至专业演奏阶段。</p>
+    </div>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px;">
+      <div class="card">
+        <div class="card-title"><h3>儿童组</h3><span class="tag tag-cat">6–9 岁</span></div>
+        <p>演奏 1 首任意风格作品，时长不超过 4 分钟。</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>少年组</h3><span class="tag tag-cat">10–14 岁</span></div>
+        <p>演奏 2 首不同风格作品，时长不超过 8 分钟。</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>青年组</h3><span class="tag tag-cat">15–18 岁</span></div>
+        <p>演奏 2 首作品，含 1 首古典时期奏鸣曲快板乐章。</p>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>专业组</h3><span class="tag tag-cat">19–22 岁</span></div>
+        <p>演奏 30 分钟独奏会曲目，含李斯特练习曲。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 实时评分动态（活动流） -->
+<section class="section" id="activitySection" style="background: rgba(20,17,13,.4);">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Live Activity</span>
+      <h2>实时评分动态</h2>
+      <p>最近评委打分与选手提交的作品。</p>
+    </div>
+    <div class="activity-feed" id="activityFeed" style="max-width: 920px; margin: 0 auto;"></div>
+  </div>
+</section>
+
+<!-- 奖项设置 -->
+<section class="section" id="prizes">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Awards</span>
+      <h2>奖项设置</h2>
+      <p>本届赛事奖金总额 12 万美元，获奖选手将获得奖金、签约演出机会以及大师班推荐。</p>
+    </div>
+    <table class="data-table" style="max-width: 720px; margin: 0 auto;">
+      <thead><tr><th>奖项</th><th>奖金 / 权益</th><th>名额</th></tr></thead>
+      <tbody>
+        <tr><td><strong style="color:var(--color-gold-2);">冠 军</strong></td><td>￥ 80,000 + 签约演出</td><td>各组别一名</td></tr>
+        <tr><td><strong style="color:var(--color-gold-2);">亚 军</strong></td><td>￥ 40,000</td><td>各组别一名</td></tr>
+        <tr><td><strong style="color:var(--color-gold-2);">季 军</strong></td><td>￥ 20,000</td><td>各组别一名</td></tr>
+        <tr><td><strong style="color:var(--color-gold-2);">最佳李斯特演绎奖</strong></td><td>￥ 15,000</td><td>全场唯一</td></tr>
+        <tr><td><strong style="color:var(--color-gold-2);">最具潜力奖</strong></td><td>￥ 10,000</td><td>每组一名</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 页脚 -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <h5>李斯特国际青少年钢琴大赛</h5>
+      <p style="font-size:.9rem;">面向全球 6–22 岁青少年钢琴学习者的权威性国际赛事，致力于发掘并培育新一代钢琴艺术人才。</p>
+    </div>
+    <div>
+      <h5>赛 事</h5>
+      <ul>
+        <li><a href="#schedule">赛事日程</a></li>
+        <li><a href="#groups">组别设置</a></li>
+        <li><a href="#prizes">奖项设置</a></li>
+        <li><a href="judges.html">评委阵容</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>参 赛</h5>
+      <ul>
+        <li><a href="register.html">选手注册</a></li>
+        <li><a href="login.html">登录系统</a></li>
+        <li><a href="result.html">我的成绩</a></li>
+        <li><a href="upload.html">上传作品</a></li>
+        <li><a href="judge-panel.html">评委入口</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>联 系</h5>
+      <ul>
+        <li>contact@liszt-pc.org</li>
+        <li>+86 571-8888-0000</li>
+        <li>杭州市西湖区文三路 88 号</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Liszt International Piano Competition. All rights reserved.</span>
+    <span>第 12 届 · 2026 赛季 · 杭州</span>
+  </div>
+</footer>
+
+<!-- Modal 容器 -->
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modalInner"></div></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>

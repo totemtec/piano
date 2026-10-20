@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>页面未找到 · 李斯特国际青少年钢琴大赛</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .nf-shell { min-height: calc(100vh - 80px); min-height: calc(100dvh - 80px); display: grid; place-items: center; padding: 40px 24px; }
+    .nf-card { text-align: center; max-width: 480px; }
+    .nf-code { font-family: var(--font-serif); font-size: 6rem; color: var(--color-gold); margin: 0; line-height: 1; letter-spacing: .04em; }
+    .nf-card h2 { margin: 12px 0 8px; font-family: var(--font-serif); }
+    .nf-card p { color: var(--color-text-dim); margin: 0 0 24px; }
+    .nf-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .nf-piano { font-size: 3rem; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-logo">L</span>
+        <span>Liszt IPC<small>李斯特国际青少年钢琴大赛</small></span>
+      </a>
+      <nav class="nav-links"></nav>
+      <div class="nav-spacer"></div>
+      <div class="nav-actions"></div>
+    </div>
+  </header>
+
+  <main class="nf-shell">
+    <div class="nf-card">
+      <div class="nf-piano">🎹</div>
+      <h1 class="nf-code">404</h1>
+      <h2>页面未找到</h2>
+      <p>您访问的页面可能已迁移、被删除，或地址输入有误。<br>请检查链接，或返回首页继续浏览。</p>
+      <div class="nf-actions">
+        <a class="btn btn-primary" href="index.html">返回首页</a>
+        <a class="btn btn-ghost" href="javascript:history.back()">返回上一页</a>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modalInner"></div></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

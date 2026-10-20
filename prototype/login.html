@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 · 李斯特国际青少年钢琴大赛</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-logo">L</span>
+      <span>Liszt IPC<small>李斯特国际青少年钢琴大赛</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="judges.html">专家评委</a>
+      <a href="index.html#schedule">赛事日程</a>
+    </nav>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions"></div>
+  </div>
+</header>
+
+<main class="auth-shell">
+  <div class="auth-card" id="authCard">
+    <h2 id="authTitle">欢迎回来</h2>
+    <p class="sub" id="authSub">登录以查看比赛成绩、评委评语及管理参赛作品</p>
+
+    <!-- 已登录入口面板（检测到已登录或跳转失败时显示） -->
+    <div id="loggedInPanel" style="display:none;">
+      <div class="alert alert-success" style="text-align:left;">
+        <strong>✓ 您已登录</strong>
+        <p class="muted" style="margin:8px 0 0;">请选择要进入的页面：</p>
+      </div>
+      <div id="loggedInLinks" style="display:flex; flex-direction:column; gap:12px; margin-top:18px;">
+        <!-- 动态填充 -->
+      </div>
+      <div style="margin-top:20px; text-align:center;">
+        <button type="button" class="btn btn-ghost btn-sm" id="btnLogoutFromPanel">退出登录</button>
+      </div>
+    </div>
+
+    <div id="authForms">
+      <div class="auth-tabs">
+        <button class="active" data-tab="login">账号登录</button>
+        <button data-tab="register">注册参赛</button>
+      </div>
+
+      <div id="alertBox"></div>
+
+      <!-- 登录 -->
+      <form id="loginForm">
+        <div class="field">
+          <label>账号</label>
+          <input type="text" name="username" required placeholder="请输入用户名" autocomplete="username">
+        </div>
+        <div class="field">
+          <label>密码</label>
+          <input type="password" name="password" required placeholder="请输入密码" autocomplete="current-password">
+        </div>
+        <button class="btn btn-primary btn-block" type="submit">登 录</button>
+
+        <div class="alert alert-info" style="margin-top: 22px;">
+          <strong>演示账号（点击下方按钮一键登录）：</strong>
+          <div style="display:flex; gap:10px; margin-top: 12px; flex-wrap: wrap;">
+            <button type="button" class="btn btn-primary btn-sm" data-demo-login="player">以选手身份登录</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-demo-login="player" data-demo-next="upload.html">以选手身份登录（去上传页）</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-demo-login="judge">以评委身份登录</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-demo-login="admin">以组委会身份登录</button>
+          </div>
+          <div class="muted" style="font-size: .82rem; margin-top: 12px;">
+            · 选手：<span class="kbd">player</span> / <span class="kbd">123456</span><br>
+            · 评委：<span class="kbd">judge</span> / <span class="kbd">123456</span><br>
+            · 组委会：<span class="kbd">admin</span> / <span class="kbd">admin</span>
+          </div>
+        </div>
+      </form>
+
+      <!-- 注册 -->
+      <form id="registerForm" style="display:none;">
+      <!-- 头像 + 身份证号 -->
+      <div class="register-top">
+        <div class="avatar-uploader" id="avatarUploader">
+          <input type="file" id="avatarInput" accept="image/png,image/jpeg,image/webp" hidden>
+          <div class="avatar-preview" id="avatarPreview" aria-label="点击上传头像">
+            <span class="avatar-ph">+ 上传头像</span>
+          </div>
+          <div class="avatar-tip">支持 JPG / PNG / WebP · 不超过 2 MB</div>
+        </div>
+        <div class="idcard-block">
+          <div class="field">
+            <label>身份证号 *</label>
+            <input type="text" name="idCard" id="idCardInput" required maxlength="18"
+                   pattern="[1-9]\d{5}(?:18|19|20)\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])\d{3}[\dXx]"
+                   placeholder="18 位居民身份证号" autocomplete="off">
+            <p class="muted" style="font-size:.78rem; margin-top:6px;">用于报名核对与参赛证发放，仅赛事组委会可见。</p>
+          </div>
+          <div class="idcard-meta" id="idCardMeta" style="display:none;">
+            <span class="idcard-tag">✓ 校验通过</span>
+            <span class="muted" id="idCardDerived"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>真实姓名 *</label>
+          <input type="text" name="name" required placeholder="例如：张三">
+        </div>
+        <div class="field">
+          <label>账号 *</label>
+          <input type="text" name="username" required placeholder="登录用户名">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>性别 *</label>
+          <select name="gender" id="genderSelect" required>
+            <option value="">请选择</option>
+            <option value="male">男</option>
+            <option value="female">女</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>出生年月</label>
+          <input type="text" name="birth" id="birthInput" placeholder="从身份证自动识别" readonly>
+        </div>
+      </div>
+      <div class="field">
+        <label>密码 *</label>
+        <input type="password" name="password" required placeholder="6 位以上">
+      </div>
+
+      <div class="field">
+        <label>参赛专业 *</label>
+        <div class="major-cards" id="majorCards" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
+          <!-- JS 动态渲染 -->
+        </div>
+        <input type="hidden" name="major" id="majorInput" required>
+        <p class="muted" id="majorDesc" style="font-size:.78rem; margin-top:6px;"></p>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>参赛组别 *</label>
+          <select name="group" id="groupSelect" required disabled>
+            <option value="">请先选择专业</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>年龄</label>
+          <input type="number" name="age" min="6" max="22" placeholder="6–22">
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>手机号 *</label>
+          <input type="tel" name="phone" required pattern="1[3-9]\d{9}" placeholder="11 位手机号" autocomplete="tel">
+        </div>
+        <div class="field">
+          <label>邮箱</label>
+          <input type="email" name="email" placeholder="用于接收赛事通知">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>所在学校 / 机构</label>
+          <input type="text" name="school" placeholder="例如：中央音乐学院附中">
+        </div>
+        <div class="field">
+          <label>指导教师</label>
+          <input type="text" name="teacher" placeholder="例如：李老师">
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">注册并登录</button>
+    </form>
+
+  </div>
+</main>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modalInner"></div></div>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+  // 已登录则自动跳转；若跳转失败则显示入口面板
+  (function () {
+    try {
+      if (LisztAuth.current) {
+        const next = new URLSearchParams(location.search).get('next');
+        const target = next || roleHome(LisztAuth.current.role, LisztAuth.current.id);
+        doRedirect(target);
+        // 300ms 后若仍在此页，显示入口面板
+        setTimeout(() => showLoggedInPanel(), 300);
+      }
+    } catch (err) {
+      console.error('Auto redirect error:', err);
+      if (LisztAuth.current) showLoggedInPanel();
+    }
+  })();
+
+  // 登录/注册切换
+  document.querySelectorAll('.auth-tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.auth-tabs button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const tab = btn.dataset.tab;
+      document.getElementById('loginForm').style.display    = tab === 'login' ? '' : 'none';
+      document.getElementById('registerForm').style.display = tab === 'register' ? '' : 'none';
+    });
+  });
+
+  const alertBox = document.getElementById('alertBox');
+  const authForms = document.getElementById('authForms');
+  const loggedInPanel = document.getElementById('loggedInPanel');
+  const loggedInLinks = document.getElementById('loggedInLinks');
+  function showAlert(type, msg) {
+    alertBox.innerHTML = `<div class="alert alert-${type}">${LisztUtil.escape(msg)}</div>`;
+  }
+
+  // 显示已登录入口面板（跳转失败 fallback）
+  function showLoggedInPanel() {
+    if (!LisztAuth.current) return;
+    const u = LisztAuth.current;
+    if (authForms) authForms.style.display = 'none';
+    if (loggedInPanel) {
+      loggedInPanel.style.display = '';
+      const role = u.role;
+      let links = '';
+      if (role === 'contestant') {
+        links += `<a class="btn btn-primary btn-block" href="result.html">查看我的成绩</a>`;
+        links += `<a class="btn btn-ghost btn-block" href="upload.html">📤 上传 / 修改作品</a>`;
+        links += `<a class="btn btn-ghost btn-block" href="registration.html">报名详情 →</a>`;
+      } else if (role === 'judge') {
+        links += `<a class="btn btn-primary btn-block" href="review.html">立即点评作品</a>`;
+        links += `<a class="btn btn-ghost btn-block" href="judge-panel.html">完整评审中心</a>`;
+      } else {
+        links += `<a class="btn btn-primary btn-block" href="admin.html">进入管理后台</a>`;
+      }
+      links += `<a class="btn btn-ghost btn-block" href="index.html">返回首页</a>`;
+      loggedInLinks.innerHTML = links;
+    }
+    const title = document.getElementById('authTitle');
+    const sub = document.getElementById('authSub');
+    if (title) title.textContent = (u.name || u.username) + '，欢迎回来';
+    if (sub) sub.textContent = '您已登录，请选择下方入口';
+    const logoutBtn = document.getElementById('btnLogoutFromPanel');
+    if (logoutBtn) logoutBtn.addEventListener('click', () => LisztAuth.logout());
+  }
+
+  // 获取角色默认首页
+  function roleHome(role, userId) {
+    if (role === 'contestant') {
+      const hasWorks = LisztStore.videosBy(v => v.contestantId === userId).length > 0;
+      return hasWorks ? 'result.html' : 'upload.html';
+    }
+    return role === 'judge' ? 'review.html' : 'admin.html';
+  }
+
+  // 执行跳转并捕获错误
+  function doRedirect(next) {
+    try {
+      if (!next) throw new Error('跳转目标为空');
+      // 确保 URL 正确
+      const url = next.startsWith('http') ? next : (location.origin + '/' + next.replace(/^\//, ''));
+      // 尝试多种跳转方式（兼容 iframe / 沙箱预览环境）
+      if (window.top && window.top !== window.self) {
+        try { window.top.location.href = url; } catch (e) {}
+      }
+      try { window.location.href = url; } catch (e) {}
+      try { window.location.replace(url); } catch (e) {}
+      try { window.location.assign(url); } catch (e) {}
+    } catch (err) {
+      console.error('Redirect error:', err);
+      showAlert('error', '跳转失败：' + err.message + ' <a href="' + (next || '#') + '" style="color:#c8a45c;text-decoration:underline;">手动跳转</a>');
+    }
+  }
+
+  // 登录
+  document.getElementById('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    try {
+      const fd = new FormData(e.target);
+      const result = LisztAuth.login(fd.get('username').trim(), fd.get('password'));
+      if (!result.ok) { showAlert('error', result.msg); return; }
+      showAlert('success', '登录成功，正在跳转…');
+      const next = new URLSearchParams(location.search).get('next') || roleHome(result.user.role, result.user.id);
+      // 立即跳转（某些浏览器在 setTimeout 中限制 location 跳转）
+      doRedirect(next);
+      // 若跳转失败，300ms 后显示入口面板
+      setTimeout(() => showLoggedInPanel(), 300);
+    } catch (err) {
+      console.error('Login error:', err);
+      showAlert('error', '登录处理出错：' + err.message);
+    }
+  });
+
+  // 一键演示登录
+  document.querySelectorAll('[data-demo-login]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      try {
+        const username = btn.dataset.demoLogin;
+        const passwords = { player: '123456', admin: 'admin', judge: '123456' };
+        const result = LisztAuth.login(username, passwords[username]);
+        if (!result.ok) { showAlert('error', '演示账号登录失败'); return; }
+        const next = btn.dataset.demoNext || new URLSearchParams(location.search).get('next') || roleHome(result.user.role, result.user.id);
+        doRedirect(next);
+      } catch (err) {
+        console.error('Demo login error:', err);
+        showAlert('error', '演示登录出错：' + err.message);
+      }
+    });
+  });
+
+  // 注册
+  document.getElementById('registerForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(e.target));
+    if (fd.password.length < 6) { showAlert('error', '密码至少 6 位'); return; }
+    if (!fd.major) { showAlert('error', '请先选择参赛专业'); return; }
+    if (!fd.group) { showAlert('error', '请选择参赛组别'); return; }
+    if (!/^1[3-9]\d{9}$/.test(fd.phone)) { showAlert('error', '请输入正确的 11 位手机号'); return; }
+    if (!LisztUtil.isValidIdCard(fd.idCard)) { showAlert('error', '身份证号格式不正确，请检查后重新输入'); return; }
+    if (!fd.gender) { showAlert('error', '请选择性别'); return; }
+    const derived = LisztUtil.parseIdCard(fd.idCard);
+    const result = LisztAuth.register({
+      username: fd.username.trim(),
+      password: fd.password,
+      name: fd.name,
+      gender: fd.gender,
+      birth: derived.birth,
+      age: derived.age,
+      idCard: fd.idCard.toUpperCase(),
+      idCardHash: LisztUtil.hashIdCard(fd.idCard),  // 用于后台去重
+      avatarUrl: window.__pendingAvatar || '',
+      avatarColor: LisztUtil.pickAvatarColor(fd.name),
+      major: fd.major,
+      group: fd.group,
+      phone: fd.phone,
+      school: fd.school,
+      teacher: fd.teacher,
+      email: fd.email,
+      feePaid: false,
+      feeAmount: LisztData.SEED_COMPETITION.feeAmount
+    });
+    if (!result.ok) { showAlert('error', result.msg); return; }
+    showAlert('success', '注册成功，请上传您的第一件参赛作品…');
+    doRedirect('upload.html');
+  });
+
+  // ============== 头像上传 ==============
+  (function initAvatarUploader() {
+    const input = document.getElementById('avatarInput');
+    const preview = document.getElementById('avatarPreview');
+    if (!input || !preview) return;
+    preview.addEventListener('click', () => input.click());
+    input.addEventListener('change', async () => {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      if (!/^image\/(png|jpe?g|webp)$/i.test(file.type)) {
+        showAlert('error', '请选择 PNG / JPG / WebP 格式的图片');
+        input.value = '';
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        showAlert('error', '头像大小不能超过 2 MB');
+        input.value = '';
+        return;
+      }
+      try {
+        const dataUrl = await LisztUtil.compressImage(file, 320, 0.85);
+        preview.innerHTML = `<img src="${dataUrl}" alt="头像预览">`;
+        preview.classList.add('has-image');
+        window.__pendingAvatar = dataUrl;
+      } catch (err) {
+        console.error(err);
+        showAlert('error', '头像读取失败：' + err.message);
+      }
+    });
+  })();
+
+  // ============== 身份证号：实时校验 + 提取出生年月 / 性别 ==============
+  (function initIdCard() {
+    const idInput = document.getElementById('idCardInput');
+    const meta = document.getElementById('idCardMeta');
+    const derived = document.getElementById('idCardDerived');
+    const genderSel = document.getElementById('genderSelect');
+    const birthInput = document.getElementById('birthInput');
+    if (!idInput) return;
+    idInput.addEventListener('input', () => {
+      const v = idInput.value.trim().toUpperCase();
+      if (v.length < 18) {
+        meta.style.display = 'none';
+        return;
+      }
+      if (LisztUtil.isValidIdCard(v)) {
+        const info = LisztUtil.parseIdCard(v);
+        meta.style.display = '';
+        derived.textContent = `出生 ${info.birth} · ${info.genderLabel} · ${info.region}`;
+        // 自动填充：性别 + 出生年月
+        if (genderSel && !genderSel.value) genderSel.value = info.gender;
+        if (birthInput) birthInput.value = info.birth;
+      } else {
+        meta.style.display = '';
+        derived.textContent = '✗ 身份证号校验未通过';
+        derived.style.color = '#f3b8b8';
+      }
+    });
+  })();
+
+  // 专业卡片渲染 + 组别联动
+  (function initMajor() {
+    const wrap = document.getElementById('majorCards');
+    const groupSelect = document.getElementById('groupSelect');
+    const majorInput = document.getElementById('majorInput');
+    const majorDesc = document.getElementById('majorDesc');
+    if (!wrap) return;
+    function render() {
+      wrap.innerHTML = LisztData.MAJORS.map(m => `
+        <button type="button" class="major-card" data-major="${m.key}" style="
+          padding:14px 8px; border-radius:10px;
+          background:rgba(20,17,13,.6);
+          border:1px solid rgba(200,164,92,.28);
+          color:var(--color-text); cursor:pointer;
+          display:flex; flex-direction:column; align-items:center; gap:6px;
+          font-family:inherit; transition:all .2s;
+        ">
+          <span style="font-size:1.6rem;">${m.icon}</span>
+          <span style="font-weight:600;">${m.label}</span>
+        </button>
+      `).join('');
+      wrap.querySelectorAll('.major-card').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.dataset.major;
+          const m = LisztData.MAJORS.find(x => x.key === key);
+          wrap.querySelectorAll('.major-card').forEach(b => {
+            b.style.background = 'rgba(20,17,13,.6)';
+            b.style.borderColor = 'rgba(200,164,92,.28)';
+            b.style.color = 'var(--color-text)';
+          });
+          btn.style.background = 'rgba(200,164,92,.2)';
+          btn.style.borderColor = 'var(--color-gold)';
+          btn.style.color = 'var(--color-gold-2)';
+          majorInput.value = key;
+          majorDesc.textContent = m.desc;
+          groupSelect.disabled = false;
+          groupSelect.innerHTML = '<option value="">请选择组别</option>' +
+            m.groups.map(g => `<option>${g}</option>`).join('');
+        });
+      });
+    }
+    render();
+  })();
+</script>
+</body>
+</html>
